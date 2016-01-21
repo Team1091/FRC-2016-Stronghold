@@ -23,7 +23,7 @@ import edu.wpi.first.wpilibj.Timer;
  * don't. Unless you know what you are doing, complex code will be much more difficult under
  * this system. Use IterativeRobot or Command-Based instead if you're new.
  */
-public class Robot extends SampleRobot {
+public class Robot extends SampleRobot{
     RobotDrive myRobot;
     Joystick stick;
 
@@ -33,16 +33,63 @@ public class Robot extends SampleRobot {
         stick = new Joystick(0);
     }
 
-    /**
-     * Drive left & right motors for 2 seconds then stop
-     */
+  
+    
     public void autonomous() {
         myRobot.setSafetyEnabled(false);
-        myRobot.drive(-0.5, 0.0);	// drive forwards half speed
-        Timer.delay(2.0);		//    for 2 seconds
-        myRobot.drive(0.0, 0.0);	// stop robot
+//        autoPortcullis(-1);
+//        autoChevaldefrise(-1);
+//        autoRampards(-1);
+//        autoMoat(-1);
+//        autoDrawbridge(-1);
+//        autoSallyport(-1);
+//        autoRockwall(-1);
+//        autoRoughterrain(-1);
+//        autoLowbar();
+        myRobot.drive(0.0, 0.0);
     }
 
+    private void autoPortcullis(int pos)
+    {
+    	autoCenter(pos);
+    }
+    private void autoChevaldefrise(int pos)
+    {
+    	autoCenter(pos);
+    }
+    private void autoRampards(int pos)
+    {
+    	autoCenter(pos);
+    }
+    private void autoMoat(int pos)
+    {
+    	autoCenter(pos);
+    }
+    private void autoDrawbridge(int pos)
+    {
+    	autoCenter(pos);
+    }
+    private void autoSallyport(int pos)
+    {
+    	autoCenter(pos);
+    }
+    private void autoRockwall(int pos)
+    {
+    	autoCenter(pos);
+    }
+    private void autoRoughterrain(int pos)
+    {
+    	autoCenter(pos);
+    }
+    private void autoLowbar()
+    {
+    	autoCenter(5);
+    }
+    private void autoCenter(int pos)
+    {
+    	
+    }
+    
     /**
      * Runs the motors with arcade steering.
      */
