@@ -1,5 +1,6 @@
 bin
 dist
 build
+.DS_Store
 src/org/usfirst/frc/team1091/robot/.metadata
 
