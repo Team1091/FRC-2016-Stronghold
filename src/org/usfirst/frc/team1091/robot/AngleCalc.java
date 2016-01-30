@@ -14,18 +14,41 @@ public class AngleCalc {
 	{
 		double vX = dist/time; //initial horizontal velocity of ball (m/s)
 		double vI = Math.sqrt((vY * vY) + (vX * vX)); //initial velocity of ball (m/s)
-		angle = Math.tanh(vY/vX);
+		angle = Math.atan(vY/vX);
 		rpm = (vI/circ) * 60; 
 	}
 	
-	public double getAngle()
+	public AngleCalc()
+	{
+		
+	}
+	
+	public void setAngle(double dist)
+	{
+		double vX = dist/time; //initial horizontal velocity of ball (m/s)
+		double vI = Math.sqrt((vY * vY) + (vX * vX)); //initial velocity of ball (m/s)
+		angle = Math.atan(vY/vX);
+		rpm = (vI/circ) * 60; 
+	}
+	
+	public double getAngle() //returns angle in radians
 	{
 		return angle;
 	}
 	
-	public double getRPM()
+	public double getAngleDeg() //returns angle in degrees
+	{
+		return Math.toDegrees(angle);
+	}
+	
+	public double getRPM() //returns RPM to shoot
 	{
 		return rpm;
+	}
+	
+	public double getTimeAir() //returns time ball is in air
+	{
+		return time;
 	}
 
 }
