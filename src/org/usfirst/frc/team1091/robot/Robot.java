@@ -2,6 +2,7 @@
 package org.usfirst.frc.team1091.robot;
 import edu.wpi.first.wpilibj.SampleRobot;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.CameraServer;
@@ -28,8 +29,10 @@ public class Robot extends SampleRobot {
 	AngleCalc calc = new AngleCalc();
 	double angle;
 	double RPM;
+	
+	final DriverStation.Alliance color;
 
-	boolean xboxBut1, xboxBut2, xboxBut3, xboxBut4;
+	boolean xboxBut1, xboxBut2, xboxBut3;
 	/**
 	 * 1: Right Joystick Arcade Drive
 	 * 2: Left Joystick Arcade Drive
@@ -41,7 +44,6 @@ public class Robot extends SampleRobot {
 	 * 1: Joystick drive / lever shooter
 	 * 2: Joystick drive / hat shooter
 	 * 3: Joystick drive / scroll shooter
-	 * 
 	 */
 	boolean joyBut1, joyBut2, joyBut3, joyBut4;
 	/**
@@ -51,7 +53,9 @@ public class Robot extends SampleRobot {
 	 * 4: Right stick drive / Left shooter
 	**/
 	public Robot() {
-		myRobot = new RobotDrive(0,1);
+		color = DriverStation.getInstance().getAlliance();
+		System.out.print(color.name());
+		myRobot = new RobotDrive(0,1,2,3);
 		myRobot.setExpiration(0.1);
 		xbox = new Joystick(0);
 		cyborg = new Joystick(1);
@@ -60,7 +64,7 @@ public class Robot extends SampleRobot {
 		
 		//xboxBut2 = true;
 		//cyborgBut1 = true;
-		joyBut1 = true;
+		joyBut4 = true;
 		
 		
 		server = CameraServer.getInstance();
@@ -137,10 +141,14 @@ public class Robot extends SampleRobot {
 		{
 			if(x < 0)
 			{
-				x *= -1;
+				x *= 1;
 				return (-1 * x * x * x * (x * (x * 6 -15) + 10)) ;
 			} else
+			{
+				x *= -1;
 				return (x * x * x * (x * (x * 6 -15) + 10)) ;
+			}
+				
 		}
 	}
 	
@@ -148,7 +156,7 @@ public class Robot extends SampleRobot {
 	private double setSensitivity(double x)
 	{
 		x -= 1;
-		return ((x/-8) + 0.5);
+		return ((x/-8) + 0.5) * -1; //Was .25 chaged for xboxremote
 	}
 	
 	//GET DISTANCE TO WALL
@@ -185,14 +193,16 @@ public class Robot extends SampleRobot {
 		if (xboxBut1) // Right Joy Arcade Drive
 		{
 			double yAxis = xbox.getRawAxis(5) * setSensitivity(cyborg.getRawAxis(4));
-			double xAxis = xbox.getRawAxis(4) * setSensitivity(cyborg.getRawAxis(4)) * -1;
+			double xAxis = xbox.getRawAxis(4) * setSensitivity(cyborg.getRawAxis(4));
+			System.out.println("Y: " + yAxis);
+			System.out.print("X: " + xAxis);
 			if (!(Math.abs(yAxis) < deadZone) || !(Math.abs(xAxis) < deadZone)) // deadzone
 				myRobot.arcadeDrive(yAxis, xAxis, true);
 		}
 		if (xboxBut2) // Left Joy Arcade Drive
 		{
 			double yAxis = xbox.getRawAxis(1) * setSensitivity(cyborg.getRawAxis(4));
-			double xAxis = xbox.getRawAxis(0) * setSensitivity(cyborg.getRawAxis(4)) * -1;
+			double xAxis = xbox.getRawAxis(0) * setSensitivity(cyborg.getRawAxis(4));
 			if (!(Math.abs(yAxis) < deadZone) || !(Math.abs(xAxis) < deadZone)) // deadzone
 				myRobot.arcadeDrive(yAxis, xAxis, true);
 		}
@@ -204,43 +214,27 @@ public class Robot extends SampleRobot {
 				myRobot.tankDrive(leftAxis, rightAxis, true);
 		}
 
-		if (xboxBut4) // Trigger Tank Drive
-		{
-			double rightAxis = xbox.getRawAxis(2) * setSensitivity(cyborg.getRawAxis(4)); // Left Trigger
-			double leftAxis = xbox.getRawAxis(3) * setSensitivity(cyborg.getRawAxis(4)); // Right Trigger
-			boolean aButton = xbox.getRawButton(1); // "A" Button
-			boolean yButton = xbox.getRawButton(4); // "Y" Button
-			if (!(Math.abs(rightAxis) < deadZone) || !(Math.abs(leftAxis) < deadZone)) // deadzone
-			{
-				if (yButton == false && aButton == false)
-					myRobot.tankDrive(leftAxis * -1, rightAxis * -1, true);
-				else if (aButton == true)
-					myRobot.tankDrive(leftAxis, rightAxis, true);
-			}
-			if (yButton == true)
-				myRobot.tankDrive(0, 0);
-		}
 	}
 	//CYBORG CONTROLS
 	private void cyborgDrive() {
 		if (cyborgBut1) // Joystick drive / lever shooter
 		{
-			double yAxis = driveConvert(cyborg.getRawAxis(1)) * setSensitivity(cyborg.getRawAxis(4));
+			double yAxis = driveConvert(cyborg.getRawAxis(1) * -1) * setSensitivity(cyborg.getRawAxis(4));
 			double xAxis = driveConvert(cyborg.getRawAxis(3) * -1) * setSensitivity(cyborg.getRawAxis(4));;
 			if (!(Math.abs(cyborg.getRawAxis(1)) < deadZone) || !(Math.abs(cyborg.getRawAxis(3)) < deadZone)) // deadzone
 				myRobot.arcadeDrive(yAxis, xAxis, true);
 		}
 		if (cyborgBut2) // Joystick drive / hat shooter
 		{
-			double yAxis = driveConvert(cyborg.getRawAxis(1)) * setSensitivity(cyborg.getRawAxis(4));
-			double xAxis = driveConvert((cyborg.getRawAxis(3) * -1)) * setSensitivity(cyborg.getRawAxis(4));
+			double yAxis = driveConvert(cyborg.getRawAxis(1) * -1) * setSensitivity(cyborg.getRawAxis(4));
+			double xAxis = driveConvert((cyborg.getRawAxis(3)) * -1) * setSensitivity(cyborg.getRawAxis(4));
 			if (!(Math.abs(cyborg.getRawAxis(1)) < deadZone) || !(Math.abs(cyborg.getRawAxis(3)) < deadZone)) // deadzone
 				myRobot.arcadeDrive(yAxis, xAxis, true);
 		}
 		if (cyborgBut3) // Joystick drive / scroll shooter
 		{
-			double yAxis = driveConvert(cyborg.getRawAxis(1)) * setSensitivity(cyborg.getRawAxis(4));
-			double xAxis = driveConvert((cyborg.getRawAxis(3) * -1)) * setSensitivity(cyborg.getRawAxis(4));
+			double yAxis = driveConvert(cyborg.getRawAxis(1) * -1) * setSensitivity(cyborg.getRawAxis(4));
+			double xAxis = driveConvert((cyborg.getRawAxis(3)) * -1) * setSensitivity(cyborg.getRawAxis(4));
 			if (!(Math.abs(cyborg.getRawAxis(1)) < deadZone) || !(Math.abs(cyborg.getRawAxis(3)) < deadZone)) // deadzone
 				myRobot.arcadeDrive(yAxis, xAxis, true);
 		}
@@ -249,28 +243,28 @@ public class Robot extends SampleRobot {
 	private void joyDrive() {
 		if (joyBut1) // Dual stick drive / hat shooter
 		{
-			double leftY = driveConvert(leftJoy.getRawAxis(1)) * setSensitivity(rightJoy.getRawAxis(3));
-			double rightY = driveConvert(rightJoy.getRawAxis(1)) * setSensitivity(rightJoy.getRawAxis(3));
+			double leftY = driveConvert(leftJoy.getRawAxis(1) * -1) * setSensitivity(rightJoy.getRawAxis(3));
+			double rightY = driveConvert(rightJoy.getRawAxis(1) * -1) * setSensitivity(rightJoy.getRawAxis(3));
 			if (!(Math.abs(rightY) < deadZone) || !(Math.abs(leftY) < deadZone)) // deadZone
-				myRobot.tankDrive(rightY, leftY, true);
+				myRobot.tankDrive(leftY, rightY, true);
 		}
 		if (joyBut2) // Dual stick drive / side button shooter
 		{
-			double leftY = driveConvert(leftJoy.getRawAxis(1)) * setSensitivity(rightJoy.getRawAxis(3));
-			double rightY = driveConvert(rightJoy.getRawAxis(1)) * setSensitivity(rightJoy.getRawAxis(3));
+			double leftY = driveConvert(leftJoy.getRawAxis(1) * -1) * setSensitivity(rightJoy.getRawAxis(3));
+			double rightY = driveConvert(rightJoy.getRawAxis(1) * -1) * setSensitivity(rightJoy.getRawAxis(3));
 			if (!(Math.abs(rightY) < deadZone) || !(Math.abs(leftY) < deadZone))
-				myRobot.tankDrive(rightY, leftY, true);
+				myRobot.tankDrive(leftY, rightY, true);
 		}
 		if (joyBut3) // Left stick drive / Right shooter
 		{
-			double leftY = driveConvert(leftJoy.getRawAxis(1)) * setSensitivity(leftJoy.getRawAxis(3));
-			double leftX = driveConvert(leftJoy.getRawAxis(2)*-1) * setSensitivity(leftJoy.getRawAxis(3)); //twist
+			double leftY = driveConvert(leftJoy.getRawAxis(1) * -1) * setSensitivity(leftJoy.getRawAxis(3));
+			double leftX = driveConvert(leftJoy.getRawAxis(2)* -1) * setSensitivity(leftJoy.getRawAxis(3)); //twist
 			if (!(Math.abs(leftX) < deadZone) || !(Math.abs(leftY) < deadZone))
 				myRobot.arcadeDrive(leftY, leftX, true);
 		}
 		if (joyBut4) // Right stick drive / Left shooter
 		{
-			double rightY = driveConvert(rightJoy.getRawAxis(1)) * setSensitivity(rightJoy.getRawAxis(3));
+			double rightY = driveConvert(rightJoy.getRawAxis(1) * -1) * setSensitivity(rightJoy.getRawAxis(3));
 			double rightX = driveConvert(rightJoy.getRawAxis(2) * -1) * setSensitivity(rightJoy.getRawAxis(3)); //twist
 			if (!(Math.abs(rightY) < deadZone) || !(Math.abs(rightX) < deadZone))
 				myRobot.arcadeDrive(rightY, rightX, true);
