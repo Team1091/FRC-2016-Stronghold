@@ -1,5 +1,7 @@
 
 package org.usfirst.frc.team1091.robot;
+import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.SampleRobot;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -8,7 +10,6 @@ import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.GyroBase;
 import edu.wpi.first.wpilibj.AnalogGyro;
 public class Robot extends SampleRobot {
 
@@ -62,9 +63,10 @@ public class Robot extends SampleRobot {
 		leftJoy = new Joystick(2);
 		rightJoy = new Joystick(3);
 		
-		//xboxBut2 = true;
+		
+		xboxBut2 = true;
 		//cyborgBut1 = true;
-		joyBut4 = true;
+		//joyBut1 = true;
 		
 		
 		server = CameraServer.getInstance();
@@ -77,18 +79,42 @@ public class Robot extends SampleRobot {
 	//MAIN AUTONOMOUS METHOD 
 	public void autonomous() {
 		myRobot.setSafetyEnabled(false);
+		try{
 		// autoPortcullis(-1);
 		// autoChevaldefrise(-1);
 		// autoRampards(-1);
 		// autoMoat(-1);
 		// autoDrawbridge(-1);
 		// autoSallyport(-1);
-		// autoRockwall(-1);
+		 autoRockwall(-1);
 		// autoRoughterrain(-1);
 		// autoLowbar();
-		myRobot.drive(0.0, 0.0);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		stop();
 	}
-
+	private void left(double num)
+	{
+		myRobot.setLeftRightMotorOutputs(num, 0);
+	}
+	
+	private void right(double num)
+	{
+		myRobot.setLeftRightMotorOutputs(0, num);
+	}
+	
+	private void forward(double num)
+	{
+		myRobot.setLeftRightMotorOutputs(num, num);
+	}
+	
+	private void stop()
+	{
+		myRobot.stopMotor();
+	}
 	private void autoPortcullis(int pos) {
 		autoCenter(pos);
 	}
@@ -97,11 +123,29 @@ public class Robot extends SampleRobot {
 		autoCenter(pos);
 	}
 
-	private void autoRampards(int pos) {
+	private void autoRampards(int pos) throws InterruptedException {
+		forward(0.4);
+		Thread.sleep(2000);
+		left(0.1);
+		right(0.6);
+		Thread.sleep(500);
 		autoCenter(pos);
 	}
 
-	private void autoMoat(int pos) {
+	private void autoMoat(int pos) throws InterruptedException {
+		forward(0.3);
+		Thread.sleep(1500);
+		stop();
+		Thread.sleep(1000);
+		forward(0.5);
+		Thread.sleep(1000);
+		stop();
+		forward(0.4);
+		Thread.sleep(750);
+		right(0.3);
+		left(0.1);
+		Thread.sleep(250);
+		stop();
 		autoCenter(pos);
 	}
 
@@ -113,11 +157,21 @@ public class Robot extends SampleRobot {
 		autoCenter(pos);
 	}
 
-	private void autoRockwall(int pos) {
+	private void autoRockwall(int pos) throws InterruptedException { //run backwards
+		forward(-0.3);
+		Thread.sleep(1500);
+		forward(-0.5);
+		Thread.sleep(1000);
+		forward(-0.2);
+		Thread.sleep(200);
+		forward(-0.5);
+		Thread.sleep(800);
 		autoCenter(pos);
 	}
 
-	private void autoRoughterrain(int pos) {
+	private void autoRoughterrain(int pos) throws InterruptedException {
+		forward(0.3);
+		Thread.sleep(3000);
 		autoCenter(pos);
 	}
 
@@ -155,8 +209,15 @@ public class Robot extends SampleRobot {
 	//SETS CONTROLLER SENSITIVITY
 	private double setSensitivity(double x)
 	{
-		x -= 1;
-		return ((x/-8) + 0.5) * -1; //Was .25 chaged for xboxremote
+		x *= -1;
+		x += 1;
+		x /= 2; //sets range of (0,1)
+		
+		final double low = 0.3; //minimum sensitivity
+		final double high = 0.7; //maximum sensitivity
+
+		final double constant = 1/(high-low); //constant for use in equation
+		return (((x * x)/constant) + low) * -1;
 	}
 	
 	//GET DISTANCE TO WALL
@@ -187,7 +248,7 @@ public class Robot extends SampleRobot {
 			Timer.delay(0.001); // wait for a motor update time
 		}
 	}
-	
+
 	//XBOX CONTROLS
 	private void xboxDrive() {
 		if (xboxBut1) // Right Joy Arcade Drive
@@ -219,22 +280,22 @@ public class Robot extends SampleRobot {
 	private void cyborgDrive() {
 		if (cyborgBut1) // Joystick drive / lever shooter
 		{
-			double yAxis = driveConvert(cyborg.getRawAxis(1) * -1) * setSensitivity(cyborg.getRawAxis(4));
-			double xAxis = driveConvert(cyborg.getRawAxis(3) * -1) * setSensitivity(cyborg.getRawAxis(4));;
+			double yAxis = driveConvert(cyborg.getRawAxis(1) * -1) * setSensitivity(cyborg.getRawAxis(4)) * 0.5;
+			double xAxis = driveConvert(cyborg.getRawAxis(3) * -1) * setSensitivity(cyborg.getRawAxis(4)) * 0.5;
 			if (!(Math.abs(cyborg.getRawAxis(1)) < deadZone) || !(Math.abs(cyborg.getRawAxis(3)) < deadZone)) // deadzone
 				myRobot.arcadeDrive(yAxis, xAxis, true);
 		}
 		if (cyborgBut2) // Joystick drive / hat shooter
 		{
-			double yAxis = driveConvert(cyborg.getRawAxis(1) * -1) * setSensitivity(cyborg.getRawAxis(4));
-			double xAxis = driveConvert((cyborg.getRawAxis(3)) * -1) * setSensitivity(cyborg.getRawAxis(4));
+			double yAxis = driveConvert(cyborg.getRawAxis(1) * -1) * setSensitivity(cyborg.getRawAxis(4)) * 0.5;
+			double xAxis = driveConvert((cyborg.getRawAxis(3)) * -1) * setSensitivity(cyborg.getRawAxis(4)) * 0.5;
 			if (!(Math.abs(cyborg.getRawAxis(1)) < deadZone) || !(Math.abs(cyborg.getRawAxis(3)) < deadZone)) // deadzone
 				myRobot.arcadeDrive(yAxis, xAxis, true);
 		}
 		if (cyborgBut3) // Joystick drive / scroll shooter
 		{
-			double yAxis = driveConvert(cyborg.getRawAxis(1) * -1) * setSensitivity(cyborg.getRawAxis(4));
-			double xAxis = driveConvert((cyborg.getRawAxis(3)) * -1) * setSensitivity(cyborg.getRawAxis(4));
+			double yAxis = driveConvert(cyborg.getRawAxis(1) * -1) * setSensitivity(cyborg.getRawAxis(4)) * 0.5;
+			double xAxis = driveConvert((cyborg.getRawAxis(3)) * -1) * setSensitivity(cyborg.getRawAxis(4)) * 0.5;
 			if (!(Math.abs(cyborg.getRawAxis(1)) < deadZone) || !(Math.abs(cyborg.getRawAxis(3)) < deadZone)) // deadzone
 				myRobot.arcadeDrive(yAxis, xAxis, true);
 		}
@@ -243,29 +304,29 @@ public class Robot extends SampleRobot {
 	private void joyDrive() {
 		if (joyBut1) // Dual stick drive / hat shooter
 		{
-			double leftY = driveConvert(leftJoy.getRawAxis(1) * -1) * setSensitivity(rightJoy.getRawAxis(3));
-			double rightY = driveConvert(rightJoy.getRawAxis(1) * -1) * setSensitivity(rightJoy.getRawAxis(3));
+			double leftY = driveConvert(leftJoy.getRawAxis(1) * -1) * setSensitivity(rightJoy.getRawAxis(3)) * 0.5;
+			double rightY = driveConvert(rightJoy.getRawAxis(1) * -1) * setSensitivity(rightJoy.getRawAxis(3)) * 0.5;
 			if (!(Math.abs(rightY) < deadZone) || !(Math.abs(leftY) < deadZone)) // deadZone
 				myRobot.tankDrive(leftY, rightY, true);
 		}
 		if (joyBut2) // Dual stick drive / side button shooter
 		{
-			double leftY = driveConvert(leftJoy.getRawAxis(1) * -1) * setSensitivity(rightJoy.getRawAxis(3));
-			double rightY = driveConvert(rightJoy.getRawAxis(1) * -1) * setSensitivity(rightJoy.getRawAxis(3));
+			double leftY = driveConvert(leftJoy.getRawAxis(1) * -1) * setSensitivity(rightJoy.getRawAxis(3)) * 0.5;
+			double rightY = driveConvert(rightJoy.getRawAxis(1) * -1) * setSensitivity(rightJoy.getRawAxis(3)) * 0.5;
 			if (!(Math.abs(rightY) < deadZone) || !(Math.abs(leftY) < deadZone))
 				myRobot.tankDrive(leftY, rightY, true);
 		}
 		if (joyBut3) // Left stick drive / Right shooter
 		{
-			double leftY = driveConvert(leftJoy.getRawAxis(1) * -1) * setSensitivity(leftJoy.getRawAxis(3));
-			double leftX = driveConvert(leftJoy.getRawAxis(2)* -1) * setSensitivity(leftJoy.getRawAxis(3)); //twist
+			double leftY = driveConvert(leftJoy.getRawAxis(1) * -1) * setSensitivity(leftJoy.getRawAxis(3)) * 0.5;
+			double leftX = driveConvert(leftJoy.getRawAxis(2)* -1) * setSensitivity(leftJoy.getRawAxis(3)) * 0.5; //twist
 			if (!(Math.abs(leftX) < deadZone) || !(Math.abs(leftY) < deadZone))
 				myRobot.arcadeDrive(leftY, leftX, true);
 		}
 		if (joyBut4) // Right stick drive / Left shooter
 		{
-			double rightY = driveConvert(rightJoy.getRawAxis(1) * -1) * setSensitivity(rightJoy.getRawAxis(3));
-			double rightX = driveConvert(rightJoy.getRawAxis(2) * -1) * setSensitivity(rightJoy.getRawAxis(3)); //twist
+			double rightY = driveConvert(rightJoy.getRawAxis(1) * -1) * setSensitivity(rightJoy.getRawAxis(3)) * 0.5;
+			double rightX = driveConvert(rightJoy.getRawAxis(2) * -1) * setSensitivity(rightJoy.getRawAxis(3)) * 0.5; //twist
 			if (!(Math.abs(rightY) < deadZone) || !(Math.abs(rightX) < deadZone))
 				myRobot.arcadeDrive(rightY, rightX, true);
 		}
