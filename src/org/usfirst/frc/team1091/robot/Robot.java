@@ -1,31 +1,41 @@
 
 package org.usfirst.frc.team1091.robot;
 import edu.wpi.first.wpilibj.SerialPort;
-import edu.wpi.first.wpilibj.Ultrasonic;
+import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.SampleRobot;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.AnalogGyro;
+import edu.wpi.first.wpilibj.Victor;
+import edu.wpi.first.wpilibj.DigitalInput;
 public class Robot extends SampleRobot {
 
 	CameraServer server;
-
-	RobotDrive myRobot;
-	Joystick xbox; // xbox controller
-	Joystick cyborg; // cyborg controller
-
-	// Joysticks below used together in unison, separated in code for usability
-	Joystick leftJoy; // left joystick controller
-	Joystick rightJoy; // right joystick controller
+//	SerialPort.Port port = new Port(3);
+//	SerialPort sonic = new SerialPort(19200, port);
 	
-	Encoder encoder;
+	RobotDrive myRobot;
+	
+	final Joystick xbox; // xbox controller	
+	final Joystick cyborg; // cyborg controller
+	// Joysticks below used together in unison, separated in code for usability
+	final Joystick leftJoy; // left joystick controller
+	final Joystick rightJoy; // right joystick controller
+	
+	final Victor lShoot;
+	final Victor rShoot;
+	final Victor lift;
+	DigitalInput limit;
+	
+	Encoder lEncod; //20 per rotation
+	Encoder rEncod;
+	Encoder liftEncod;
+	
 
-	final double deadZone = 0.01;
+	final double deadZone = 0.02;
 	
 	AngleCalc calc = new AngleCalc();
 	double angle;
@@ -53,18 +63,35 @@ public class Robot extends SampleRobot {
 	 * 3: Left stick drive / Right shooter
 	 * 4: Right stick drive / Left shooter
 	**/
+	
+	SerialPort serialPort;
+	
 	public Robot() {
+		
+		serialPort = new SerialPort(19200, Port.kUSB);
+		
 		color = DriverStation.getInstance().getAlliance();
 		System.out.print(color.name());
 		myRobot = new RobotDrive(0,1,2,3);
 		myRobot.setExpiration(0.1);
+		
+		lShoot = new Victor(5);
+		rShoot = new Victor(6);
+		lift = new Victor(4);
+		
+		limit = new DigitalInput(0); //normally closed
+		
+		lEncod = new Encoder(1, 2, true);
+		rEncod = new Encoder(3, 4);
+		liftEncod = new Encoder(5, 6);
+		
 		xbox = new Joystick(0);
 		cyborg = new Joystick(1);
 		leftJoy = new Joystick(2);
 		rightJoy = new Joystick(3);
 		
 		
-		xboxBut2 = true;
+		xboxBut1 = true;
 		//cyborgBut1 = true;
 		//joyBut1 = true;
 		
@@ -227,16 +254,49 @@ public class Robot extends SampleRobot {
 		return dist;
 	}
 	
+	long lLastEncoderVal = 0;
+	long rLastEncoderVal = 0;
+	long lastTime = System.currentTimeMillis();
+	
 	//UPDATE CONTROLS AND SENSORS
 	private void refresh()
 	{
+		long currentTime = System.currentTimeMillis();
+		long changeTime = currentTime - lastTime;
+		
+		long lCurrentEncod = lEncod.get();
+		long lChangeEncod = lCurrentEncod - lLastEncoderVal;
+		
+		long rCurrentEncod = rEncod.get();
+		long rChangeEncod = rCurrentEncod - rLastEncoderVal;
+		
+		long lCurrentRPM = (lChangeEncod) / (changeTime * 1200000); 
+		long rCurrentRPM = (rChangeEncod) / (changeTime * 1200000);
+		// Figure out what we are getting from serial
+//		byte[] data = serialPort.read(serialPort.getBytesReceived());
+//
+//		for (int i = 0; i < data.length; i++) {
+//			System.out.print((int) data[i]);
+//		}
+//		
+		
+		System.out.println("lRPM: " + lCurrentRPM);
+		System.out.println("rRPM: " + rCurrentRPM);
+		System.out.println("liftEncod: " + liftEncod.get());
+		System.out.println("Limit: " + limit.get());
+		
 		calc.setAngle(getDistance()); //check dist and perform calculations
 		angle = calc.getAngle(); //update angle val from dist
 		RPM = calc.getRPM(); //update RPM val from dist
 		
 		xboxDrive(); // For xbox controls
+		xboxShoot(); // For xbox shooting
 		cyborgDrive(); // For cyclops controls
 		joyDrive(); // For dual joystick controls
+		
+		lastTime = currentTime;
+		lLastEncoderVal = lEncod.get();
+		rLastEncoderVal = rEncod.get();
 	}
 	
 	//MAIN WHILE LOOP
@@ -248,15 +308,90 @@ public class Robot extends SampleRobot {
 			Timer.delay(0.001); // wait for a motor update time
 		}
 	}
-
-	//XBOX CONTROLS
+	//XBOX SHOOTING CONTROLS
+	private void xboxShoot() {
+		if (xboxBut1) // Right Joy Arcade Drive
+		{
+			double yAxis = xbox.getRawAxis(1);
+			double trigger = xbox.getRawAxis(2);
+			
+			if(!(Math.abs(trigger) < deadZone))
+			{
+				lShoot.set(trigger);
+				rShoot.set(-trigger);
+			}
+			else if(xbox.getRawButton(5) == true){
+				double var = 0.5;
+				lShoot.set(-var);
+				rShoot.set(var);
+			}
+			else {
+				lShoot.set(0);
+				rShoot.set(0);
+			}
+			if(!(Math.abs(yAxis) < deadZone))
+			lift.set(yAxis * -0.50);
+			else 
+			lift.set(0.4);
+				
+		}
+		if (xboxBut2) // Left Joy Arcade Drive
+		{
+			double yAxis = xbox.getRawAxis(5);
+			double trigger = xbox.getRawAxis(3);
+			
+			if(!(Math.abs(trigger) < deadZone))
+			{
+				lShoot.set(trigger);
+				rShoot.set(-trigger);
+			}
+			else if(xbox.getRawButton(6) == true){
+				double var = 0.5;
+				lShoot.set(-var);
+				rShoot.set(var);
+			}
+			else {
+				lShoot.set(0);
+				rShoot.set(0);
+			}
+			if(!(Math.abs(yAxis) < deadZone))
+			lift.set(yAxis * -0.50);
+			else 
+			lift.set(0.4);
+		}
+		if (xboxBut3) // Joystick Tank Drive
+		{
+			double yAxis = xbox.getRawAxis(1);
+			double lTrigger = xbox.getRawAxis(2);
+			double rTrigger = xbox.getRawAxis(3);
+			
+			if(!(Math.abs(lTrigger) < deadZone))
+			{
+				lShoot.set(lTrigger);
+				rShoot.set(-lTrigger);
+			}
+			else if(!(Math.abs(rTrigger) < deadZone)){
+				lShoot.set(-rTrigger);
+				rShoot.set(rTrigger);
+			}
+			else {
+				lShoot.set(0);
+				rShoot.set(0);
+			}
+			if(xbox.getRawButton(5) == true)
+				lift.set(-0.50);
+			else if(xbox.getRawButton(6) == true)
+				lift.set(0.50);
+			else 
+				lift.set(0.4);
+		}
+	}
+	//XBOX DRIVING CONTROLS
 	private void xboxDrive() {
 		if (xboxBut1) // Right Joy Arcade Drive
 		{
 			double yAxis = xbox.getRawAxis(5) * setSensitivity(cyborg.getRawAxis(4));
 			double xAxis = xbox.getRawAxis(4) * setSensitivity(cyborg.getRawAxis(4));
-			System.out.println("Y: " + yAxis);
-			System.out.print("X: " + xAxis);
 			if (!(Math.abs(yAxis) < deadZone) || !(Math.abs(xAxis) < deadZone)) // deadzone
 				myRobot.arcadeDrive(yAxis, xAxis, true);
 		}
@@ -276,7 +411,11 @@ public class Robot extends SampleRobot {
 		}
 
 	}
-	//CYBORG CONTROLS
+	//CYBORG SHOOTING CONTROLS
+	private void cyborgShoot() {
+		
+	}
+	//CYBORG DRIVING CONTROLS
 	private void cyborgDrive() {
 		if (cyborgBut1) // Joystick drive / lever shooter
 		{
@@ -299,6 +438,10 @@ public class Robot extends SampleRobot {
 			if (!(Math.abs(cyborg.getRawAxis(1)) < deadZone) || !(Math.abs(cyborg.getRawAxis(3)) < deadZone)) // deadzone
 				myRobot.arcadeDrive(yAxis, xAxis, true);
 		}
+	}
+	//DUAL JOYSTICK SHOOTING CONTROLS
+	private void joyShoot() {
+		
 	}
 	//DUAL JOYSTICK CONROLS
 	private void joyDrive() {
