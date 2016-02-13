@@ -68,11 +68,11 @@ public class Robot extends SampleRobot {
 	 * shooter
 	 **/
 
-	SerialPort serialPort;
+	//SerialPort serialPort;
 
 	public Robot() {
 
-		serialPort = new SerialPort(19200, Port.kUSB);
+	//	serialPort = new SerialPort(19200, Port.kUSB);
 
 		color = DriverStation.getInstance().getAlliance();
 		System.out.print(color.name());
@@ -322,7 +322,7 @@ public class Robot extends SampleRobot {
 	private void xboxShoot() {
 		if (xboxBut1) // Right Joy Arcade Drive
 		{
-			double yAxis = xbox.getRawAxis(1);
+			double yAxis = xbox.getRawAxis(5); //was 1
 			double trigger = xbox.getRawAxis(2);
 
 			if (!(Math.abs(trigger) < deadZone)) {
@@ -338,11 +338,11 @@ public class Robot extends SampleRobot {
 				rShoot.set(0);
 			}
 			if (!(Math.abs(yAxis) < deadZone) && limit.get())
-				lift.set(yAxis * -0.50);
+				lift.set(yAxis * 0.75);
 			else if (!(Math.abs(yAxis) < deadZone) && yAxis > 0)
-				lift.set(yAxis * -0.50);
+				lift.set(yAxis * 0.5);
 			else
-				lift.set(0.4);
+				lift.set(-0.4);
 
 		}
 		if (xboxBut2) // Left Joy Arcade Drive
@@ -397,8 +397,8 @@ public class Robot extends SampleRobot {
 	private void xboxDrive() {
 		if (xboxBut1) // Right Joy Arcade Drive
 		{
-			double yAxis = xbox.getRawAxis(5) * setSensitivity(cyborg.getRawAxis(4));
-			double xAxis = xbox.getRawAxis(4) * setSensitivity(cyborg.getRawAxis(4));
+			double yAxis = xbox.getRawAxis(1) * setSensitivity(cyborg.getRawAxis(4));
+			double xAxis = xbox.getRawAxis(0) * setSensitivity(cyborg.getRawAxis(4));
 			if (!(Math.abs(yAxis) < deadZone) || !(Math.abs(xAxis) < deadZone)) // deadzone
 				myRobot.arcadeDrive(yAxis, xAxis, true);
 		}
