@@ -206,8 +206,10 @@ public class Robot extends SampleRobot {
 		autoCenter(pos);
 	}
 
-	private void autoLowbar() {
-		autoCenter(5);
+	private void autoLowbar(int pos) throws InterruptedException { // This will still need to be tested USE WITH CARE
+		forward(.5);
+		Thread.sleep(5000);
+		autoCenter(pos);
 	}
 
 	// AUTOMOUSLY CENTERS ROBOT
@@ -447,51 +449,4 @@ public class Robot extends SampleRobot {
 				myRobot.arcadeDrive(yAxis, xAxis, true);
 		}
 	}
-	// //DUAL JOYSTICK SHOOTING CONTROLS
-	// private void joyShoot() {
-	//
-	// }
-	// //DUAL JOYSTICK CONROLS
-	// private void joyDrive() {
-	// if (joyBut1) // Dual stick drive / hat shooter
-	// {
-	// double leftY = driveConvert(leftJoy.getRawAxis(1) * -1) *
-	// setSensitivity(rightJoy.getRawAxis(3)) * 0.5;
-	// double rightY = driveConvert(rightJoy.getRawAxis(1) * -1) *
-	// setSensitivity(rightJoy.getRawAxis(3)) * 0.5;
-	// if (!(Math.abs(rightY) < deadZone) || !(Math.abs(leftY) < deadZone)) //
-	// deadZone
-	// myRobot.tankDrive(leftY, rightY, true);
-	// }
-	// if (joyBut2) // Dual stick drive / side button shooter
-	// {
-	// double leftY = driveConvert(leftJoy.getRawAxis(1) * -1) *
-	// setSensitivity(rightJoy.getRawAxis(3)) * 0.5;
-	// double rightY = driveConvert(rightJoy.getRawAxis(1) * -1) *
-	// setSensitivity(rightJoy.getRawAxis(3)) * 0.5;
-	// if (!(Math.abs(rightY) < deadZone) || !(Math.abs(leftY) < deadZone))
-	// myRobot.tankDrive(leftY, rightY, true);
-	// }
-	// if (joyBut3) // Left stick drive / Right shooter
-	// {
-	// double leftY = driveConvert(leftJoy.getRawAxis(1) * -1) *
-	// setSensitivity(leftJoy.getRawAxis(3)) * 0.5;
-	// double leftX = driveConvert(leftJoy.getRawAxis(2)* -1) *
-	// setSensitivity(leftJoy.getRawAxis(3)) * 0.5; //twist
-	// if (!(Math.abs(leftX) < deadZone) || !(Math.abs(leftY) < deadZone))
-	// myRobot.arcadeDrive(leftY, leftX, true);
-	// }
-	// if (joyBut4) // Right stick drive / Left shooter
-	// {
-	// double rightY = driveConvert(rightJoy.getRawAxis(1) * -1) *
-	// setSensitivity(rightJoy.getRawAxis(3)) * 0.5;
-	// double rightX = driveConvert(rightJoy.getRawAxis(2) * -1) *
-	// setSensitivity(rightJoy.getRawAxis(3)) * 0.5; //twist
-	// if (!(Math.abs(rightY) < deadZone) || !(Math.abs(rightX) < deadZone))
-	// myRobot.arcadeDrive(rightY, rightX, true);
-	// }
-	// }
-	//
-	//
-	// public void test() {}
 }
