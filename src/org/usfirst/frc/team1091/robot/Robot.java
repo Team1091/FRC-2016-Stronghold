@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.Solenoid;
 public class Robot extends SampleRobot {
 
 	CameraServer server;
+	//ReEnable soon
 	// SerialPort.Port port = new Port(3);
 	// SerialPort sonic = new SerialPort(19200, port);
 
