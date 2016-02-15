@@ -237,9 +237,9 @@ public class Robot extends SampleRobot {
 		if (isYButtonPushed) {
 			int liftDiffToTar = (deg45 + liftEncod.get());
 			if (liftDiffToTar < -4) {
-				liftPower = -0.5;
+				liftPower = -0.6;
 			} else if( liftDiffToTar > 4){
-				liftPower = 0.5;
+				liftPower = 0.6;
 			}else{
 				liftPower = (float)liftDiffToTar * (0.5/4.0);
 			}
