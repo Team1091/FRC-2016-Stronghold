@@ -23,11 +23,6 @@ public class Robot extends SampleRobot {
 	AutoDrive autoDrive;
 	final Joystick xbox; // xbox controller
 
-	// final Joystick cyborg; // cyborg controller
-	// // Joysticks below used together in unison, separated in code for
-	// usability
-	// final Joystick leftJoy; // left joystick controller
-	// final Joystick rightJoy; // right joystick controller
 
 	final int rightBumperButtonNumber = 6;
 
@@ -84,7 +79,7 @@ public class Robot extends SampleRobot {
 		rShoot = new Victor(6);
 		lift = new Victor(4);
 
-		limit = new DigitalInput(0); // normally closed
+		limit = new DigitalInput(0); // normally open
 
 		lEncod = new Encoder(1, 2, true);
 		rEncod = new Encoder(3, 4);
@@ -99,7 +94,7 @@ public class Robot extends SampleRobot {
 
 		server = CameraServer.getInstance();
 		server.setQuality(100);
-		// the camera name (ex "cam0") can be found through the roborio web
+		// the camera name (ex "cam0") can be found through the roboRIO web
 		// interface
 		server.startAutomaticCapture("cam0");
 	}
@@ -130,7 +125,7 @@ public class Robot extends SampleRobot {
 
 	// GET DISTANCE TO WALL
 	private double getDistance() {
-		double dist = 0; // replace with ultrasonic code
+		double dist = 0; // replace with distince code
 		return dist;
 	}
 
@@ -200,15 +195,14 @@ public class Robot extends SampleRobot {
 	// XBOX SHOOTING CONTROLS
 
 	public final int deg45 = 40;
-
-	// 177.5 in theory
-
+	public final int deg60 = 55;
+	
 	private void xboxShoot() {
 		double yAxis = xbox.getRawAxis(5);
 		double trigger = xbox.getRawAxis(2);
 		boolean isHomeButtonPushed = DriverStation.getInstance().getStickButton(0, (byte) 8);
 		boolean isYButtonPushed = DriverStation.getInstance().getStickButton(0, (byte) 4);
-
+		boolean isBButtenPushed = DriverStation.getInstance().getStickButton(0, (byte) 5); //TODO CHECK THE NUMBER THIS IS WRONG!!!!!!!!!!
 		// Firing Wheels
 		if (!(Math.abs(trigger) < deadZone)) {
 			lShoot.set(-trigger);
@@ -256,9 +250,7 @@ public class Robot extends SampleRobot {
 				liftPower = -0.6;
 			}
 		}
-
 		lift.set(liftPower);
-
 	}
 
 	// XBOX DRIVING CONTROLS
