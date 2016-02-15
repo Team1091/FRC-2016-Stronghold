@@ -1,8 +1,6 @@
 
 package org.usfirst.frc.team1091.robot;
 
-import edu.wpi.first.wpilibj.SerialPort;
-import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.SampleRobot;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
@@ -11,7 +9,6 @@ import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Victor;
-import edu.wpi.first.wpilibj.filters.LinearDigitalFilter;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Solenoid;
 
@@ -131,20 +128,6 @@ public class Robot extends SampleRobot {
 		}
 	}
 
-	// SETS CONTROLLER SENSITIVITY
-	private double setSensitivity(double x) {
-		x *= -1;
-		x += 1;
-		x /= 2; // sets range of (0,1)
-
-		final double low = 0.3; // minimum sensitivity
-		final double high = 0.7; // maximum sensitivity
-
-		final double constant = 1 / (high - low); // constant for use in
-													// equation
-		return (((x * x) / constant) + low) * -1;
-	}
-
 	// GET DISTANCE TO WALL
 	private double getDistance() {
 		double dist = 0; // replace with ultrasonic code
@@ -216,9 +199,9 @@ public class Robot extends SampleRobot {
 
 	// XBOX SHOOTING CONTROLS
 
-	int deg45 = 30;
+	public final int deg45 = 100;
 
-	// 177.5 in theary
+	// 177.5 in theory
 
 	private void xboxShoot() {
 		double yAxis = xbox.getRawAxis(5);
@@ -239,7 +222,7 @@ public class Robot extends SampleRobot {
 			rShoot.set(0);
 		}
 
-		// Pnumatic Kicker
+		// Pneumatic Kicker
 		if (xbox.getRawButton(rightBumperButtonNumber)) {
 			in.set(true);
 			out.set(false);
@@ -252,8 +235,8 @@ public class Robot extends SampleRobot {
 		double liftPower = yAxis;
 
 		if (isYButtonPushed) {
-			System.out.println("45 deg");
-			int liftDiffToTar = (deg45 - liftEncod.get());
+//			System.out.println("45 deg");
+			int liftDiffToTar = (deg45 + liftEncod.get());
 			if (liftDiffToTar < 0) {
 				liftPower = -0.5;
 			} else {
@@ -262,9 +245,11 @@ public class Robot extends SampleRobot {
 		}
 
 		if (limit.get()) {
-			System.out.println("resetting encoder");
+//			System.out.println("resetting encoder");
 			// We are at the top, so reset it and dont go negative any more
-			liftEncod.reset();
+
+			if (liftEncod.get() != 0)
+				liftEncod.reset();
 			liftPower = Math.max(0, liftPower);
 		} else {
 			if (isHomeButtonPushed) {
