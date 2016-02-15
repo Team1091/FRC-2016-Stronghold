@@ -32,7 +32,7 @@ public class Robot extends SampleRobot {
 	// final Joystick leftJoy; // left joystick controller
 	// final Joystick rightJoy; // right joystick controller
 
-	final int rightBumperButtenNumber = 6;
+	final int rightBumperButtonNumber = 6;
 
 	final Victor lShoot;
 	final Victor rShoot;
@@ -183,15 +183,6 @@ public class Robot extends SampleRobot {
 		// }
 		//
 
-		// Pnumatics of the sole stuff
-		if (xbox.getRawButton(rightBumperButtenNumber)) {
-			in.set(true);
-			out.set(false);
-			// put a sleep here
-		} else {
-			in.set(false);
-			out.set(true);
-		}
 		// System.out.println("lRPM: " + lCurrentRPM);
 		// System.out.println("rRPM: " + rCurrentRPM);
 		System.out.println("liftEncod: " + liftEncod.get());
@@ -225,20 +216,20 @@ public class Robot extends SampleRobot {
 
 	// XBOX SHOOTING CONTROLS
 
-	int deg45 = -30;
+	int deg45 = 30;
 
 	// 177.5 in theary
 
 	private void xboxShoot() {
 		double yAxis = xbox.getRawAxis(5);
 		double trigger = xbox.getRawAxis(2);
-		boolean homeButten = DriverStation.getInstance().getStickButton(0, (byte) 8);
-		boolean degSet45 = DriverStation.getInstance().getStickButton(0, (byte) 4);
+		boolean isHomeButtonPushed = DriverStation.getInstance().getStickButton(0, (byte) 8);
+		boolean isYButtonPushed = DriverStation.getInstance().getStickButton(0, (byte) 4);
 
+		// Firing Wheels
 		if (!(Math.abs(trigger) < deadZone)) {
 			lShoot.set(-trigger);
 			rShoot.set(trigger);
-			// launch solenoid
 		} else if (xbox.getRawButton(5) == true) {
 			double var = 0.5;
 			lShoot.set(var);
@@ -248,32 +239,41 @@ public class Robot extends SampleRobot {
 			rShoot.set(0);
 		}
 
-//		if(limit.get()){
-//			// We are at the top, so reset it
-//			liftEncod.reset();
-//			System.out.println("resetting encoder");
-//		}
-		
-		if (homeButten) {
-			System.out.println("Homies");
-			if (!limit.get()) {
-				lift.set(-.5);
-			} else {
-				//lift.set(Math.max(yAxis, 0));
-				lift.set(0);
-				System.out.println("0 motor");
-			}
-
-		} else if (degSet45) {
-			System.out.println("45 deg");
-			int liftDiffToTar = (liftEncod.get() - deg45);
-			if (liftDiffToTar < 0) {
-				lift.set(-.5);
-			} else {
-				lift.set(.5);
-			}
-
+		// Pnumatic Kicker
+		if (xbox.getRawButton(rightBumperButtonNumber)) {
+			in.set(true);
+			out.set(false);
+			// put a sleep here
+		} else {
+			in.set(false);
+			out.set(true);
 		}
+
+		double liftPower = yAxis;
+
+		if (isYButtonPushed) {
+			System.out.println("45 deg");
+			int liftDiffToTar = (deg45 - liftEncod.get());
+			if (liftDiffToTar < 0) {
+				liftPower = -0.5;
+			} else {
+				liftPower = 0.5;
+			}
+		}
+
+		if (limit.get()) {
+			System.out.println("resetting encoder");
+			// We are at the top, so reset it and dont go negative any more
+			liftEncod.reset();
+			liftPower = Math.max(0, liftPower);
+		} else {
+			if (isHomeButtonPushed) {
+				liftPower = -0.5;
+			}
+		}
+
+		lift.set(liftPower);
+
 	}
 
 	// XBOX DRIVING CONTROLS
