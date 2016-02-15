@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Victor;
-import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Solenoid;
 
@@ -25,10 +24,11 @@ public class Robot extends SampleRobot {
 	RobotDrive myRobot;
 
 	final Joystick xbox; // xbox controller
-	final Joystick cyborg; // cyborg controller
-	// Joysticks below used together in unison, separated in code for usability
-	final Joystick leftJoy; // left joystick controller
-	final Joystick rightJoy; // right joystick controller
+
+	//	final Joystick cyborg; // cyborg controller
+//	// Joysticks below used together in unison, separated in code for usability
+//	final Joystick leftJoy; // left joystick controller
+//	final Joystick rightJoy; // right joystick controller
 
 	final int rightBumperButtenNumber = 6;
 
@@ -94,13 +94,8 @@ public class Robot extends SampleRobot {
 		out = new Solenoid(1);
 
 		xbox = new Joystick(0);
-		cyborg = new Joystick(1);
-		leftJoy = new Joystick(2);
-		rightJoy = new Joystick(3);
 
 		xboxBut1 = true;
-		// cyborgBut1 = true;
-		// joyBut1 = true;
 
 		server = CameraServer.getInstance();
 		server.setQuality(100);
@@ -123,7 +118,6 @@ public class Robot extends SampleRobot {
 			// autoRoughterrain(-1);
 			// autoLowbar();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -298,10 +292,10 @@ public class Robot extends SampleRobot {
 			in.set(false);
 			out.set(true);
 		}
-		System.out.println("lRPM: " + lCurrentRPM);
-		System.out.println("rRPM: " + rCurrentRPM);
-		System.out.println("liftEncod: " + liftEncod.get());
-		System.out.println("Limit: " + limit.get());
+	//	System.out.println("lRPM: " + lCurrentRPM);
+	//	System.out.println("rRPM: " + rCurrentRPM);
+	//	System.out.println("liftEncod: " + liftEncod.get());
+	//	System.out.println("Limit: " + limit.get());
 
 		calc.setAngle(getDistance()); // check dist and perform calculations
 		angle = calc.getAngle(); // update angle val from dist
@@ -309,10 +303,6 @@ public class Robot extends SampleRobot {
 
 		xboxDrive(); // For xbox controls
 		xboxShoot(); // For xbox shooting
-		cyborgDrive(); // For cyclops controls
-		// cyborgShoot(); //For cyclops shooting
-		// joyDrive(); // For dual joystick controls
-		// joyShoot(); //For dual joystick shooting
 
 		lastTime = currentTime;
 		lLastEncoderVal = lEncod.get();
@@ -327,7 +317,6 @@ public class Robot extends SampleRobot {
 			try {
 				refresh();
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} // Update controls and sensors
 			Timer.delay(0.001); // wait for a motor update time
@@ -336,9 +325,7 @@ public class Robot extends SampleRobot {
 
 	// XBOX SHOOTING CONTROLS
 	private void xboxShoot() {
-		if (xboxBut1) // Right Joy Arcade Drive
-		{
-			double yAxis = xbox.getRawAxis(5); //was 1
+			double yAxis = xbox.getRawAxis(5); 
 			double trigger = xbox.getRawAxis(2);
 
 			if (!(Math.abs(trigger) < deadZone)) {
@@ -361,105 +348,14 @@ public class Robot extends SampleRobot {
 				lift.set(-0.4);
 
 		}
-		if (xboxBut2) // Left Joy Arcade Drive
-		{
-			double yAxis = xbox.getRawAxis(5);
-			double trigger = xbox.getRawAxis(3);
-
-			if (!(Math.abs(trigger) < deadZone)) {
-				lShoot.set(-trigger);
-				rShoot.set(trigger);
-			} else if (xbox.getRawButton(6) == true) {
-				double var = 0.5;
-				lShoot.set(var);
-				rShoot.set(-var);
-			} else {
-				lShoot.set(0);
-				rShoot.set(0);
-			}
-			if (!(Math.abs(yAxis) < deadZone) && limit.get())
-				lift.set(yAxis * -0.50);
-			else if (!(Math.abs(yAxis) < deadZone) && yAxis > 0)
-				lift.set(yAxis * -0.50);
-			else
-				lift.set(0.4);
-		}
-		if (xboxBut3) // Joystick Tank Drive
-		{
-			double yAxis = xbox.getRawAxis(1);
-			double lTrigger = xbox.getRawAxis(2);
-			double rTrigger = xbox.getRawAxis(3);
-
-			if (!(Math.abs(lTrigger) < deadZone)) {
-				lShoot.set(-lTrigger);
-				rShoot.set(lTrigger);
-			} else if (!(Math.abs(rTrigger) < deadZone)) {
-				lShoot.set(rTrigger);
-				rShoot.set(-rTrigger);
-			} else {
-				lShoot.set(0);
-				rShoot.set(0);
-			}
-			if (xbox.getRawButton(5) == true)
-				lift.set(-0.50);
-			else if (xbox.getRawButton(6) == true)
-				lift.set(0.50);
-			else
-				lift.set(0.4);
-		}
-	}
 
 	// XBOX DRIVING CONTROLS
 	private void xboxDrive() {
 		if (xboxBut1) // Right Joy Arcade Drive
 		{
-			double yAxis = xbox.getRawAxis(1) * -.75; //* setSensitivity(cyborg.getRawAxis(4));
-			double xAxis = xbox.getRawAxis(0) * -.75; //* setSensitivity(cyborg.getRawAxis(4));
-			if (!(Math.abs(yAxis) < deadZone) || !(Math.abs(xAxis) < deadZone)) // deadzone
-				myRobot.arcadeDrive(yAxis, xAxis, true);
-		}
-		if (xboxBut2) // Left Joy Arcade Drive
-		{
-			double yAxis = xbox.getRawAxis(1) * setSensitivity(cyborg.getRawAxis(4));
-			double xAxis = xbox.getRawAxis(0) * setSensitivity(cyborg.getRawAxis(4));
-			if (!(Math.abs(yAxis) < deadZone) || !(Math.abs(xAxis) < deadZone)) // deadzone
-				myRobot.arcadeDrive(yAxis, xAxis, true);
-		}
-		if (xboxBut3) // Joystick Tank Drive
-		{
-			double rightAxis = xbox.getRawAxis(5) * setSensitivity(cyborg.getRawAxis(4));
-			double leftAxis = xbox.getRawAxis(1) * setSensitivity(cyborg.getRawAxis(4));
-			if (!(Math.abs(rightAxis) < deadZone) || !(Math.abs(leftAxis) < deadZone)) // deadzone
-				myRobot.tankDrive(leftAxis, rightAxis, true);
-		}
-
-	}
-
-	// //CYBORG SHOOTING CONTROLS
-	// private void cyborgShoot() {
-	//
-	// }
-	// CYBORG DRIVING CONTROLS
-	private void cyborgDrive() {
-		if (cyborgBut1) // Joystick drive / lever shooter
-		{
-			double yAxis = driveConvert(cyborg.getRawAxis(1) * -1) * setSensitivity(cyborg.getRawAxis(4)) * 0.5;
-			double xAxis = driveConvert(cyborg.getRawAxis(3) * -1) * setSensitivity(cyborg.getRawAxis(4)) * 0.5;
-			if (!(Math.abs(cyborg.getRawAxis(1)) < deadZone) || !(Math.abs(cyborg.getRawAxis(3)) < deadZone)) // deadzone
-				myRobot.arcadeDrive(yAxis, xAxis, true);
-		}
-		if (cyborgBut2) // Joystick drive / hat shooter
-		{
-			double yAxis = driveConvert(cyborg.getRawAxis(1) * -1) * setSensitivity(cyborg.getRawAxis(4)) * 0.5;
-			double xAxis = driveConvert((cyborg.getRawAxis(3)) * -1) * setSensitivity(cyborg.getRawAxis(4)) * 0.5;
-			if (!(Math.abs(cyborg.getRawAxis(1)) < deadZone) || !(Math.abs(cyborg.getRawAxis(3)) < deadZone)) // deadzone
-				myRobot.arcadeDrive(yAxis, xAxis, true);
-		}
-		if (cyborgBut3) // Joystick drive / scroll shooter
-		{
-			double yAxis = driveConvert(cyborg.getRawAxis(1) * -1) * setSensitivity(cyborg.getRawAxis(4)) * 0.5;
-			double xAxis = driveConvert((cyborg.getRawAxis(3)) * -1) * setSensitivity(cyborg.getRawAxis(4)) * 0.5;
-			if (!(Math.abs(cyborg.getRawAxis(1)) < deadZone) || !(Math.abs(cyborg.getRawAxis(3)) < deadZone)) // deadzone
+			double yAxis = driveConvert(xbox.getRawAxis(1)) * -.75; 
+			double xAxis = driveConvert(xbox.getRawAxis(0)) * -.75; 
+			if (!(Math.abs(yAxis) < deadZone) || !(Math.abs(xAxis) < deadZone))
 				myRobot.arcadeDrive(yAxis, xAxis, true);
 		}
 	}
