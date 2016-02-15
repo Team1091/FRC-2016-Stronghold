@@ -199,7 +199,7 @@ public class Robot extends SampleRobot {
 
 	// XBOX SHOOTING CONTROLS
 
-	public final int deg45 = 100;
+	public final int deg45 = 40;
 
 	// 177.5 in theory
 
@@ -233,9 +233,8 @@ public class Robot extends SampleRobot {
 		}
 
 		double liftPower = yAxis;
-
+		
 		if (isYButtonPushed) {
-//			System.out.println("45 deg");
 			int liftDiffToTar = (deg45 + liftEncod.get());
 			if (liftDiffToTar < 0) {
 				liftPower = -0.5;
@@ -245,7 +244,6 @@ public class Robot extends SampleRobot {
 		}
 
 		if (limit.get()) {
-//			System.out.println("resetting encoder");
 			// We are at the top, so reset it and dont go negative any more
 
 			if (liftEncod.get() != 0)
@@ -253,7 +251,7 @@ public class Robot extends SampleRobot {
 			liftPower = Math.max(0, liftPower);
 		} else {
 			if (isHomeButtonPushed) {
-				liftPower = -0.5;
+				liftPower = -0.6;
 			}
 		}
 
