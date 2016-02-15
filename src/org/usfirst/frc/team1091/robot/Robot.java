@@ -69,11 +69,11 @@ public class Robot extends SampleRobot {
 	 * shooter
 	 **/
 
-	//SerialPort serialPort;
+	SerialPort serialPort;
 
 	public Robot() {
 
-	//	serialPort = new SerialPort(19200, Port.kUSB);
+		serialPort = new SerialPort(19200, Port.kUSB);
 
 		color = DriverStation.getInstance().getAlliance();
 		System.out.print(color.name());
