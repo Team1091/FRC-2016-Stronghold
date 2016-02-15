@@ -11,24 +11,26 @@ import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Victor;
+import edu.wpi.first.wpilibj.filters.LinearDigitalFilter;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Solenoid;
 
 public class Robot extends SampleRobot {
 
 	CameraServer server;
-	//ReEnable soon
+	// ReEnable soon
 	// SerialPort.Port port = new Port(3);
 	// SerialPort sonic = new SerialPort(19200, port);
 
 	RobotDrive myRobot;
-
+	AutoDrive autoDrive;
 	final Joystick xbox; // xbox controller
 
-	//	final Joystick cyborg; // cyborg controller
-//	// Joysticks below used together in unison, separated in code for usability
-//	final Joystick leftJoy; // left joystick controller
-//	final Joystick rightJoy; // right joystick controller
+	// final Joystick cyborg; // cyborg controller
+	// // Joysticks below used together in unison, separated in code for
+	// usability
+	// final Joystick leftJoy; // left joystick controller
+	// final Joystick rightJoy; // right joystick controller
 
 	final int rightBumperButtenNumber = 6;
 
@@ -63,23 +65,24 @@ public class Robot extends SampleRobot {
 	 * Joystick drive / scroll shooter
 	 */
 	boolean joyBut1, joyBut2, joyBut3, joyBut4;
+
 	/**
 	 * 1: Dual stick drive / hat shooter 2: Dual stick drive / side button
 	 * shooter 3: Left stick drive / Right shooter 4: Right stick drive / Left
 	 * shooter
 	 **/
 
-	//SerialPort serialPort;
+	// SerialPort serialPort;
 
 	public Robot() {
 
-		//serialPort = new SerialPort(19200, Port.kUSB);
+		// serialPort = new SerialPort(19200, Port.kUSB);
 
 		color = DriverStation.getInstance().getAlliance();
 		System.out.print(color.name());
 		myRobot = new RobotDrive(0, 1, 2, 3);
 		myRobot.setExpiration(0.1);
-
+		autoDrive = new AutoDrive(myRobot);
 		lShoot = new Victor(5);
 		rShoot = new Victor(6);
 		lift = new Victor(4);
@@ -105,111 +108,9 @@ public class Robot extends SampleRobot {
 	}
 
 	// MAIN AUTONOMOUS METHOD
+
 	public void autonomous() {
-		myRobot.setSafetyEnabled(false);
-		try {
-			// autoPortcullis(-1);
-			// autoChevaldefrise(-1);
-			// autoRampards(-1);
-			// autoMoat(-1);
-			// autoDrawbridge(-1);
-			// autoSallyport(-1);
-			autoRockwall(-1);
-			// autoRoughterrain(-1);
-			// autoLowbar();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-
-		stop();
-	}
-
-	private void left(double num) {
-		myRobot.setLeftRightMotorOutputs(num, 0);
-	}
-
-	private void right(double num) {
-		myRobot.setLeftRightMotorOutputs(0, num);
-	}
-
-	private void forward(double num) {
-		myRobot.setLeftRightMotorOutputs(num, num);
-	}
-
-	private void stop() {
-		myRobot.stopMotor();
-	}
-
-	private void autoPortcullis(int pos) {
-		autoCenter(pos);
-	}
-
-	private void autoChevaldefrise(int pos) {
-		autoCenter(pos);
-	}
-
-	private void autoRampards(int pos) throws InterruptedException {
-		forward(0.4);
-		Thread.sleep(2000);
-		left(0.1);
-		right(0.6);
-		Thread.sleep(500);
-		autoCenter(pos);
-	}
-
-	private void autoMoat(int pos) throws InterruptedException {
-		forward(0.3);
-		Thread.sleep(1500);
-		stop();
-		Thread.sleep(1000);
-		forward(0.5);
-		Thread.sleep(1000);
-		stop();
-		forward(0.4);
-		Thread.sleep(750);
-		right(0.3);
-		left(0.1);
-		Thread.sleep(250);
-		stop();
-		autoCenter(pos);
-	}
-
-	private void autoDrawbridge(int pos) {
-		autoCenter(pos);
-	}
-
-	private void autoSallyport(int pos) {
-		autoCenter(pos);
-	}
-
-	private void autoRockwall(int pos) throws InterruptedException { // run
-																		// backwards
-		forward(-0.3);
-		Thread.sleep(1500);
-		forward(-0.5);
-		Thread.sleep(1000);
-		forward(-0.2);
-		Thread.sleep(200);
-		forward(-0.5);
-		Thread.sleep(800);
-		autoCenter(pos);
-	}
-
-	private void autoRoughterrain(int pos) throws InterruptedException {
-		forward(0.3);
-		Thread.sleep(3000);
-		autoCenter(pos);
-	}
-
-	private void autoLowbar(int pos) throws InterruptedException { // This will still need to be tested USE WITH CARE
-		forward(.5);
-		Thread.sleep(5000);
-		autoCenter(pos);
-	}
-
-	// AUTOMOUSLY CENTERS ROBOT
-	private void autoCenter(int pos) {
-
+		autoDrive.autoChoose();
 	}
 
 	// SMOOTHS CONTROLS
@@ -265,13 +166,12 @@ public class Robot extends SampleRobot {
 		long rCurrentEncod = Math.abs(rEncod.get());
 		double rChangeEncod = (double) rCurrentEncod - rLastEncoderVal;
 
-//		was What is bellow 		
-//		long lCurrentRPM = (long) (((lChangeEncod / 20) / (changeTime)) * 60000);
-//		long rCurrentRPM = (long) (((rChangeEncod / 20) / (changeTime)) * 60000);
+		// was What is bellow
+		// long lCurrentRPM = (long) (((lChangeEncod / 20) / (changeTime)) *
+		// 60000);
+		// long rCurrentRPM = (long) (((rChangeEncod / 20) / (changeTime)) *
+		// 60000);
 
-		
-		
-		
 		long lCurrentRPM = (long) ((lChangeEncod / 20) / (changeTime));
 		long rCurrentRPM = (long) ((rChangeEncod / 20) / (changeTime));
 
@@ -282,20 +182,20 @@ public class Robot extends SampleRobot {
 		// System.out.print((int) data[i]);
 		// }
 		//
-		
-		//Pnumatics of the sole stuff
+
+		// Pnumatics of the sole stuff
 		if (xbox.getRawButton(rightBumperButtenNumber)) {
 			in.set(true);
 			out.set(false);
-			Thread.sleep(1000);
+			//put a sleep here
 		} else {
 			in.set(false);
 			out.set(true);
 		}
-	//	System.out.println("lRPM: " + lCurrentRPM);
-	//	System.out.println("rRPM: " + rCurrentRPM);
-	//	System.out.println("liftEncod: " + liftEncod.get());
-	//	System.out.println("Limit: " + limit.get());
+		 //System.out.println("lRPM: " + lCurrentRPM);
+		 //System.out.println("rRPM: " + rCurrentRPM);
+		// System.out.println("liftEncod: " + liftEncod.get());
+		//System.out.println("Limit: " + limit.get());
 
 		calc.setAngle(getDistance()); // check dist and perform calculations
 		angle = calc.getAngle(); // update angle val from dist
@@ -324,37 +224,62 @@ public class Robot extends SampleRobot {
 	}
 
 	// XBOX SHOOTING CONTROLS
+
+	
+	
+	int deg45 = 177;
+	
+	//177.5 in theary 
+	
 	private void xboxShoot() {
-			double yAxis = xbox.getRawAxis(5); 
-			double trigger = xbox.getRawAxis(2);
+		double yAxis = xbox.getRawAxis(5);
+		double trigger = xbox.getRawAxis(2);
+		boolean homeButten = DriverStation.getInstance().getStickButton(0, (byte) 8);
+		boolean degSet45 = DriverStation.getInstance().getStickButton(0, (byte) 4);
 
-			if (!(Math.abs(trigger) < deadZone)) {
-				lShoot.set(-trigger);
-				rShoot.set(trigger);
-				// launch solenoid
-			} else if (xbox.getRawButton(5) == true) {
-				double var = 0.5;
-				lShoot.set(var);
-				rShoot.set(-var);
-			} else {
-				lShoot.set(0);
-				rShoot.set(0);
-			}
-			if (!(Math.abs(yAxis) < deadZone) && limit.get())
-				lift.set(yAxis * 0.75);
-			else if (!(Math.abs(yAxis) < deadZone) && yAxis > 0)
-				lift.set(yAxis * 0.5);
-			else
-				lift.set(-0.4);
-
+		if (!(Math.abs(trigger) < deadZone)) {
+			lShoot.set(-trigger);
+			rShoot.set(trigger);
+			// launch solenoid
+		} else if (xbox.getRawButton(5) == true) {
+			double var = 0.5;
+			lShoot.set(var);
+			rShoot.set(-var);
+		} else {
+			lShoot.set(0);
+			rShoot.set(0);
 		}
+
+		if (homeButten) {
+			if (!limit.get()) {
+				lift.set(-.5);
+				System.out.println("Home Pressed");
+			} else {
+				lift.set(Math.max(yAxis, 0));
+				liftEncod.reset();
+				
+			}
+	
+		}
+		if (degSet45) {
+			int liftDiffToTar = (liftEncod.get()- deg45);
+			if (liftDiffToTar > 0){
+				lift.set(-.5);
+			}
+			else{
+				lift.set(.5);
+			}
+			
+		}
+	}
+
 
 	// XBOX DRIVING CONTROLS
 	private void xboxDrive() {
 		if (xboxBut1) // Right Joy Arcade Drive
 		{
-			double yAxis = driveConvert(xbox.getRawAxis(1)) * -.75; 
-			double xAxis = driveConvert(xbox.getRawAxis(0)) * -.75; 
+			double yAxis = driveConvert(xbox.getRawAxis(1)) * .50;
+			double xAxis = driveConvert(xbox.getRawAxis(0)) * .50;
 			if (!(Math.abs(yAxis) < deadZone) || !(Math.abs(xAxis) < deadZone))
 				myRobot.arcadeDrive(yAxis, xAxis, true);
 		}
