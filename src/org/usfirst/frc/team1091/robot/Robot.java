@@ -187,15 +187,15 @@ public class Robot extends SampleRobot {
 		if (xbox.getRawButton(rightBumperButtenNumber)) {
 			in.set(true);
 			out.set(false);
-			//put a sleep here
+			// put a sleep here
 		} else {
 			in.set(false);
 			out.set(true);
 		}
-		 //System.out.println("lRPM: " + lCurrentRPM);
-		 //System.out.println("rRPM: " + rCurrentRPM);
-		// System.out.println("liftEncod: " + liftEncod.get());
-		//System.out.println("Limit: " + limit.get());
+		// System.out.println("lRPM: " + lCurrentRPM);
+		// System.out.println("rRPM: " + rCurrentRPM);
+		System.out.println("liftEncod: " + liftEncod.get());
+		// System.out.println("Limit: " + limit.get());
 
 		calc.setAngle(getDistance()); // check dist and perform calculations
 		angle = calc.getAngle(); // update angle val from dist
@@ -225,12 +225,10 @@ public class Robot extends SampleRobot {
 
 	// XBOX SHOOTING CONTROLS
 
-	
-	
-	int deg45 = 177;
-	
-	//177.5 in theary 
-	
+	int deg45 = -30;
+
+	// 177.5 in theary
+
 	private void xboxShoot() {
 		double yAxis = xbox.getRawAxis(5);
 		double trigger = xbox.getRawAxis(2);
@@ -250,29 +248,33 @@ public class Robot extends SampleRobot {
 			rShoot.set(0);
 		}
 
+//		if(limit.get()){
+//			// We are at the top, so reset it
+//			liftEncod.reset();
+//			System.out.println("resetting encoder");
+//		}
+		
 		if (homeButten) {
+			System.out.println("Homies");
 			if (!limit.get()) {
 				lift.set(-.5);
-				System.out.println("Home Pressed");
 			} else {
-				lift.set(Math.max(yAxis, 0));
-				liftEncod.reset();
-				
+				//lift.set(Math.max(yAxis, 0));
+				lift.set(0);
+				System.out.println("0 motor");
 			}
-	
-		}
-		if (degSet45) {
-			int liftDiffToTar = (liftEncod.get()- deg45);
-			if (liftDiffToTar > 0){
+
+		} else if (degSet45) {
+			System.out.println("45 deg");
+			int liftDiffToTar = (liftEncod.get() - deg45);
+			if (liftDiffToTar < 0) {
 				lift.set(-.5);
-			}
-			else{
+			} else {
 				lift.set(.5);
 			}
-			
+
 		}
 	}
-
 
 	// XBOX DRIVING CONTROLS
 	private void xboxDrive() {
