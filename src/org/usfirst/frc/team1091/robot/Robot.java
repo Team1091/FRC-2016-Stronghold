@@ -69,11 +69,11 @@ public class Robot extends SampleRobot {
 	 * shooter
 	 **/
 
-	SerialPort serialPort;
+	//SerialPort serialPort;
 
 	public Robot() {
 
-		serialPort = new SerialPort(19200, Port.kUSB);
+		//serialPort = new SerialPort(19200, Port.kUSB);
 
 		color = DriverStation.getInstance().getAlliance();
 		System.out.print(color.name());
@@ -261,7 +261,7 @@ public class Robot extends SampleRobot {
 	long lastTime = System.currentTimeMillis();
 
 	// UPDATE CONTROLS AND SENSORS
-	private void refresh() {
+	private void refresh() throws InterruptedException {
 		long currentTime = System.currentTimeMillis();
 		long changeTime = currentTime - lastTime;
 
@@ -271,8 +271,15 @@ public class Robot extends SampleRobot {
 		long rCurrentEncod = Math.abs(rEncod.get());
 		double rChangeEncod = (double) rCurrentEncod - rLastEncoderVal;
 
-		long lCurrentRPM = (long) (((lChangeEncod / 20) / (changeTime)) * 60000);
-		long rCurrentRPM = (long) (((rChangeEncod / 20) / (changeTime)) * 60000);
+//		was What is bellow 		
+//		long lCurrentRPM = (long) (((lChangeEncod / 20) / (changeTime)) * 60000);
+//		long rCurrentRPM = (long) (((rChangeEncod / 20) / (changeTime)) * 60000);
+
+		
+		
+		
+		long lCurrentRPM = (long) ((lChangeEncod / 20) / (changeTime));
+		long rCurrentRPM = (long) ((rChangeEncod / 20) / (changeTime));
 
 		// Figure out what we are getting from serial
 		// byte[] data = serialPort.read(serialPort.getBytesReceived());
@@ -286,6 +293,7 @@ public class Robot extends SampleRobot {
 		if (xbox.getRawButton(rightBumperButtenNumber)) {
 			in.set(true);
 			out.set(false);
+			Thread.sleep(1000);
 		} else {
 			in.set(false);
 			out.set(true);
@@ -316,7 +324,12 @@ public class Robot extends SampleRobot {
 		myRobot.setSafetyEnabled(true);
 
 		while (isOperatorControl() && isEnabled()) {
-			refresh(); // Update controls and sensors
+			try {
+				refresh();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} // Update controls and sensors
 			Timer.delay(0.001); // wait for a motor update time
 		}
 	}
@@ -400,8 +413,8 @@ public class Robot extends SampleRobot {
 	private void xboxDrive() {
 		if (xboxBut1) // Right Joy Arcade Drive
 		{
-			double yAxis = xbox.getRawAxis(1) * setSensitivity(cyborg.getRawAxis(4));
-			double xAxis = xbox.getRawAxis(0) * setSensitivity(cyborg.getRawAxis(4));
+			double yAxis = xbox.getRawAxis(1) * -.75; //* setSensitivity(cyborg.getRawAxis(4));
+			double xAxis = xbox.getRawAxis(0) * -.75; //* setSensitivity(cyborg.getRawAxis(4));
 			if (!(Math.abs(yAxis) < deadZone) || !(Math.abs(xAxis) < deadZone)) // deadzone
 				myRobot.arcadeDrive(yAxis, xAxis, true);
 		}
