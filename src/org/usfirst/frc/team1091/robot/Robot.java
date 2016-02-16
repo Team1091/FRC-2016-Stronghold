@@ -228,7 +228,7 @@ public class Robot extends SampleRobot {
 		}
 		
 	//LIFTER CODE
-	if (isBackPushed) {	
+	if (isBackPushed) {					// TODO I think that this is all wrong
 		if (yAxis > 0.3){
 			moveToDeg = (moveToDeg + 1);
 			
