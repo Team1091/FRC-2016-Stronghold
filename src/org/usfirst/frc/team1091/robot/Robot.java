@@ -163,7 +163,7 @@ public class Robot extends SampleRobot {
 
 		// System.out.println("lRPM: " + lCurrentRPM);
 		// System.out.println("rRPM: " + rCurrentRPM);
-		System.out.println("liftEncod: " + liftEncod.get());
+		// System.out.println("liftEncod: " + liftEncod.get());
 		// System.out.println("Limit: " + limit.get());
 
 		calc.setAngle(getDistance()); // check dist and perform calculations
@@ -196,13 +196,14 @@ public class Robot extends SampleRobot {
 
 	public final int deg45 = 40;
 	public final int deg60 = 55;
-	
+	public int moveToDeg;
 	private void xboxShoot() {
 		double yAxis = xbox.getRawAxis(5);
 		double trigger = xbox.getRawAxis(2);
 		boolean isHomeButtonPushed = DriverStation.getInstance().getStickButton(0, (byte) 8);
 		boolean isYButtonPushed = DriverStation.getInstance().getStickButton(0, (byte) 4);
 		boolean isBButtenPushed = DriverStation.getInstance().getStickButton(0, (byte) 5); //TODO CHECK THE NUMBER THIS IS WRONG!!!!!!!!!!
+		
 		// Firing Wheels
 		if (!(Math.abs(trigger) < deadZone)) {
 			lShoot.set(-trigger);
@@ -220,15 +221,24 @@ public class Robot extends SampleRobot {
 		if (xbox.getRawButton(rightBumperButtonNumber)) {
 			in.set(true);
 			out.set(false);
-			// put a sleep here
+			// TODO put a sleep here
 		} else {
 			in.set(false);
 			out.set(true);
 		}
-
-		double liftPower = yAxis;
 		
-		if (isBButtenPushed){ //CHeck if the B butten is pushed
+	//LIFTER CODE
+		
+		if (yAxis > 0.3){
+			moveToDeg = (moveToDeg + 1);
+			
+		if (yAxis > -0.3){					//THis may be correct however im at home and cant check it may just floate back
+			moveToDeg = (moveToDeg - 1);
+		}
+		
+		double liftPower = (moveToDeg); //was yAxis
+
+		if (isBButtenPushed){ //Check if the B butten is pressed
 			int liftDiffToTar = (deg60 + liftEncod.get()); 
 			if (liftDiffToTar > 4) {
 				liftPower = -0.6;
@@ -238,7 +248,7 @@ public class Robot extends SampleRobot {
 			}
 		}
 		
-		if (isYButtonPushed) {
+		if (isYButtonPushed) { // Check if the Y butten is pressed
 			int liftDiffToTar = (deg45 + liftEncod.get());
 			if (liftDiffToTar < -4) {
 				liftPower = -0.6;
