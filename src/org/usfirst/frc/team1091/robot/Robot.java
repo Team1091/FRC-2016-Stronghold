@@ -202,8 +202,8 @@ public class Robot extends SampleRobot {
 		double trigger = xbox.getRawAxis(2);
 		boolean isHomeButtonPushed = DriverStation.getInstance().getStickButton(0, (byte) 8);
 		boolean isYButtonPushed = DriverStation.getInstance().getStickButton(0, (byte) 4);
-		boolean isBButtenPushed = DriverStation.getInstance().getStickButton(0, (byte) 2); //TODO CHECK THE NUMBER THIS IS WRONG !!!!!!!!!!
-		boolean isBackPushed = DriverStation.getInstance().getStickButton(0, (byte) 7); //TODO CHECK THE BUTTEN NUMBER THIS IS WRONG !!!!!!!!!!!!
+		boolean isBButtenPushed = DriverStation.getInstance().getStickButton(0, (byte) 2);
+		boolean isBackPushed = DriverStation.getInstance().getStickButton(0, (byte) 7);
 		// Firing Wheels
 		if (!(Math.abs(trigger) < deadZone)) {
 			lShoot.set(-trigger);
