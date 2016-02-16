@@ -202,8 +202,8 @@ public class Robot extends SampleRobot {
 		double trigger = xbox.getRawAxis(2);
 		boolean isHomeButtonPushed = DriverStation.getInstance().getStickButton(0, (byte) 8);
 		boolean isYButtonPushed = DriverStation.getInstance().getStickButton(0, (byte) 4);
-		boolean isBButtenPushed = DriverStation.getInstance().getStickButton(0, (byte) 5); //TODO CHECK THE NUMBER THIS IS WRONG!!!!!!!!!!
-		
+		boolean isBButtenPushed = DriverStation.getInstance().getStickButton(0, (byte) 5); //TODO CHECK THE NUMBER THIS IS WRONG !!!!!!!!!!
+		boolean isBackPushed = DriverStation.getInstance().getStickButton(0, (byte) 2); //TODO CHECK THE BUTTEN NUMBER THIS IS WRONG !!!!!!!!!!!!
 		// Firing Wheels
 		if (!(Math.abs(trigger) < deadZone)) {
 			lShoot.set(-trigger);
@@ -228,14 +228,14 @@ public class Robot extends SampleRobot {
 		}
 		
 	//LIFTER CODE
-		
+	if (isBackPushed) {	
 		if (yAxis > 0.3){
 			moveToDeg = (moveToDeg + 1);
 			
 		if (yAxis > -0.3){					//THis may be correct however im at home and cant check it may just floate back
 			moveToDeg = (moveToDeg - 1);
 		}
-		
+	}	
 		double liftPower = (moveToDeg); //was yAxis
 
 		if (isBButtenPushed){ //Check if the B butten is pressed
