@@ -272,6 +272,7 @@ public class Robot extends SampleRobot {
 		}
 		lift.set(liftPower);
 	}
+}
 
 	// XBOX DRIVING CONTROLS
 	private void xboxDrive() {
