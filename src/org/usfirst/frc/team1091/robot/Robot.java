@@ -231,8 +231,8 @@ public class Robot extends SampleRobot {
 	if (isBackPushed) {					// TODO I think that this is all wrong
 		if (yAxis > 0.3){
 			moveToDeg = (moveToDeg + 1);
-			
-		if (yAxis > -0.3){					//THis may be correct however im at home and cant check it may just floate back
+		}		
+		if (yAxis < -0.3){					//THis may be correct however i'm at home and can't check it may just float back
 			moveToDeg = (moveToDeg - 1);
 		}
 	}	
@@ -272,7 +272,7 @@ public class Robot extends SampleRobot {
 		}
 		lift.set(liftPower);
 	}
-}
+
 
 	// XBOX DRIVING CONTROLS
 	private void xboxDrive() {
