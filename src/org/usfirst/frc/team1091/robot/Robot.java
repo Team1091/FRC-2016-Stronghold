@@ -202,8 +202,8 @@ public class Robot extends SampleRobot {
 		double trigger = xbox.getRawAxis(2);
 		boolean isHomeButtonPushed = DriverStation.getInstance().getStickButton(0, (byte) 8);
 		boolean isYButtonPushed = DriverStation.getInstance().getStickButton(0, (byte) 4);
-		boolean isBButtenPushed = DriverStation.getInstance().getStickButton(0, (byte) 5); //TODO CHECK THE NUMBER THIS IS WRONG !!!!!!!!!!
-		boolean isBackPushed = DriverStation.getInstance().getStickButton(0, (byte) 2); //TODO CHECK THE BUTTEN NUMBER THIS IS WRONG !!!!!!!!!!!!
+		boolean isBButtenPushed = DriverStation.getInstance().getStickButton(0, (byte) 2); //TODO CHECK THE NUMBER THIS IS WRONG !!!!!!!!!!
+		boolean isBackPushed = DriverStation.getInstance().getStickButton(0, (byte) 7); //TODO CHECK THE BUTTEN NUMBER THIS IS WRONG !!!!!!!!!!!!
 		// Firing Wheels
 		if (!(Math.abs(trigger) < deadZone)) {
 			lShoot.set(-trigger);
@@ -228,14 +228,16 @@ public class Robot extends SampleRobot {
 		}
 		
 	//LIFTER CODE
-	if (isBackPushed) {					// TODO I think that this is all wrong
-		if (yAxis > 0.3){
-			moveToDeg = (moveToDeg + 1);
-		}		
-		if (yAxis < -0.3){					//THis may be correct however i'm at home and can't check it may just float back
-			moveToDeg = (moveToDeg - 1);
-		}
-	}	
+//	if (isBackPushed) {					// TODO I think that this is all wrong
+//		if (yAxis > 0.3){
+//			moveToDeg = (int) (moveToDeg + .5);
+//		}		
+//		if (yAxis < -0.3){					//THis may be correct however i'm at home and can't check it may just float back
+//			moveToDeg = (int) (moveToDeg - .5);
+//		}
+//	}	
+
+		System.out.println("Encoder" + liftEncod.get());
 		double liftPower = (moveToDeg); //was yAxis
 
 		if (isBButtenPushed){ //Check if the B butten is pressed
@@ -278,8 +280,8 @@ public class Robot extends SampleRobot {
 	private void xboxDrive() {
 		if (xboxBut1) // Right Joy Arcade Drive
 		{
-			double yAxis = driveConvert(xbox.getRawAxis(1)) * .50;
-			double xAxis = driveConvert(xbox.getRawAxis(0)) * .50;
+			double yAxis = xbox.getRawAxis(1) * -.75;
+			double xAxis = xbox.getRawAxis(0) * -.75;
 			if (!(Math.abs(yAxis) < deadZone) || !(Math.abs(xAxis) < deadZone))
 				myRobot.arcadeDrive(yAxis, xAxis, true);
 		}
