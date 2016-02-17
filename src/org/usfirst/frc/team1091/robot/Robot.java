@@ -35,6 +35,8 @@ public class Robot extends SampleRobot {
 	Encoder rEncod; // 20 per rotation
 	Encoder liftEncod;
 
+	boolean first;
+	
 	Solenoid in;
 	Solenoid out;
 
@@ -150,9 +152,12 @@ public class Robot extends SampleRobot {
 		// long rCurrentRPM = (long) (((rChangeEncod / 20) / (changeTime)) *
 		// 60000);
 
-		long lCurrentRPM = (long) ((lChangeEncod / 20) / (changeTime));
-		long rCurrentRPM = (long) ((rChangeEncod / 20) / (changeTime));
-
+		long lCurrentRPM = (long) ((lChangeEncod / 20) / (changeTime)) * 60000;
+		long rCurrentRPM = (long) ((rChangeEncod / 20) / (changeTime)) * 60000;
+		
+		System.out.println("lRPM: " + lCurrentRPM);
+		System.out.println("rRPM: " + rCurrentRPM);
+		
 		// Figure out what we are getting from serial
 		// byte[] data = serialPort.read(serialPort.getBytesReceived());
 		//
@@ -172,10 +177,12 @@ public class Robot extends SampleRobot {
 
 		xboxDrive(); // For xbox controls
 		xboxShoot(); // For xbox shooting
-
+		//xboxAutoShoot(angle, RPM);
+		xboxAutoShoot(Math.PI/4, 0);
+		
 		lastTime = currentTime;
-		lLastEncoderVal = lEncod.get();
-		rLastEncoderVal = rEncod.get();
+		lLastEncoderVal = Math.abs(lEncod.get());
+		rLastEncoderVal = Math.abs(rEncod.get());
 	}
 
 	// MAIN WHILE LOOP
@@ -189,11 +196,37 @@ public class Robot extends SampleRobot {
 				e.printStackTrace();
 			} // Update controls and sensors
 			Timer.delay(0.001); // wait for a motor update time
+			
 		}
 	}
-
+	
+	long startTime = 0;
+	private void kick()
+	{
+		// Pneumatic Kicker
+				
+				
+				if (first)
+				{
+					startTime = System.currentTimeMillis();
+					first = false;
+				}
+				
+				if (xbox.getRawButton(rightBumperButtonNumber)) {
+					float currentTime = System.currentTimeMillis() - startTime;
+						out.set(false);	
+						in.set(true);
+						if (currentTime <= 2500){
+						first = true;
+					}
+				} 
+				else {
+					in.set(false);
+					out.set(true);
+				}
+	}
+	
 	// XBOX SHOOTING CONTROLS
-
 	public final int deg45 = 40;
 	public final int deg60 = 55;
 	public int moveToDeg;
@@ -217,18 +250,14 @@ public class Robot extends SampleRobot {
 			rShoot.set(0);
 		}
 
-		// Pneumatic Kicker
-		if (xbox.getRawButton(rightBumperButtonNumber)) {
-			in.set(true);
-			out.set(false);
-			// TODO put a sleep here
-		} else {
-			in.set(false);
-			out.set(true);
-		}
+		kick(); //hits ball so hard 
 		
-	//LIFTER CODE
-//	if (isBackPushed) {					// TODO I think that this is all wrong
+		System.out.println("Lift: " + liftEncod.get());
+		
+	//LIFTER CODE 
+		//ALL BAD
+//	if (isBackPushed) {	// TODO I think that this is all wrong
+//		System.out.println(moveToDeg);
 //		if (yAxis > 0.3){
 //			moveToDeg = (int) (moveToDeg + .5);
 //		}		
@@ -237,32 +266,31 @@ public class Robot extends SampleRobot {
 //		}
 //	}	
 
-		System.out.println("Encoder" + liftEncod.get());
-		double liftPower = (moveToDeg); //was yAxis
+		double liftPower = (yAxis); //was yAxis
 
-		if (isBButtenPushed){ //Check if the B butten is pressed
-			int liftDiffToTar = (deg60 + liftEncod.get()); 
-			if (liftDiffToTar > 4) {
-				liftPower = -0.6;
-				
-			}else{
-				liftPower = (float) liftDiffToTar * (0.5/4.0);
-			}
-		}
+//		if (isBButtenPushed){ //Check if the B butten is pressed
+//			int liftDiffToTar = (deg60 + liftEncod.get()); 
+//			if (liftDiffToTar > 4) {
+//				liftPower = -0.6;
+//				
+//			}else{
+//				liftPower = (float) liftDiffToTar * (0.5/4.0);
+//			}
+//		}
 		
 		if (isYButtonPushed) { // Check if the Y butten is pressed
-			int liftDiffToTar = (deg45 + liftEncod.get());
+			int liftDiffToTar = (deg60 + liftEncod.get());
 			if (liftDiffToTar < -4) {
-				liftPower = -0.6;
+				liftPower = -0.4;
 			} else if( liftDiffToTar > 4){
-				liftPower = 0.6;
+				liftPower = 0.5;
 			}else{
 				liftPower = (float)liftDiffToTar * (0.5/4.0);
 			}
 		}
 
 		if (limit.get()) {
-			// We are at the top, so reset it and dont go negative any more
+			// We are at the top, so reset it and don't go negative any more
 
 			if (liftEncod.get() != 0)
 				liftEncod.reset();
@@ -272,16 +300,40 @@ public class Robot extends SampleRobot {
 				liftPower = -0.6;
 			}
 		}
-		lift.set(liftPower);
+		lift.set(-liftPower);
 	}
-
+	
+	private double getAngle()
+	{
+		double angle = Math.toRadians(90 - (-liftEncod.get() * (18/71)));
+		System.out.println("Angle: " + angle);
+		return angle;
+	}
+	
+	//PREREQ: Home shooter prior to auto-shooting
+	private void xboxAutoShoot(double angle, double RPM)
+	{
+		if(xbox.getRawButton(1) == true)
+		{
+			while(Math.abs(getAngle() - angle) < (Math.PI/71) && xbox.getRawButton(8) == false)
+			{
+				if(getAngle() > angle)
+				lift.set(-0.3);
+				else
+				lift.set(0.6);
+			}
+			lift.set(0);
+			
+		}
+	}
+	
 
 	// XBOX DRIVING CONTROLS
 	private void xboxDrive() {
 		if (xboxBut1) // Right Joy Arcade Drive
 		{
-			double yAxis = xbox.getRawAxis(1) * -.75;
-			double xAxis = xbox.getRawAxis(0) * -.75;
+			double yAxis = xbox.getRawAxis(1) * -.85;
+			double xAxis = xbox.getRawAxis(0) * -.85;
 			if (!(Math.abs(yAxis) < deadZone) || !(Math.abs(xAxis) < deadZone))
 				myRobot.arcadeDrive(yAxis, xAxis, true);
 		}
