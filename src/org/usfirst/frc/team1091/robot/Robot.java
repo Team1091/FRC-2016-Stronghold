@@ -1,4 +1,3 @@
-
 package org.usfirst.frc.team1091.robot;
 
 import edu.wpi.first.wpilibj.SampleRobot;
@@ -23,7 +22,6 @@ public class Robot extends SampleRobot {
 	AutoDrive autoDrive;
 	final Joystick xbox; // xbox controller
 
-
 	final int rightBumperButtonNumber = 6;
 
 	final Victor lShoot;
@@ -36,7 +34,7 @@ public class Robot extends SampleRobot {
 	Encoder liftEncod;
 
 	boolean first;
-	
+
 	Solenoid in;
 	Solenoid out;
 
@@ -154,10 +152,10 @@ public class Robot extends SampleRobot {
 
 		long lCurrentRPM = (long) ((lChangeEncod / 20) / (changeTime)) * 60000;
 		long rCurrentRPM = (long) ((rChangeEncod / 20) / (changeTime)) * 60000;
-		
+
 		System.out.println("lRPM: " + lCurrentRPM);
 		System.out.println("rRPM: " + rCurrentRPM);
-		
+
 		// Figure out what we are getting from serial
 		// byte[] data = serialPort.read(serialPort.getBytesReceived());
 		//
@@ -177,9 +175,9 @@ public class Robot extends SampleRobot {
 
 		xboxDrive(); // For xbox controls
 		xboxShoot(); // For xbox shooting
-		//xboxAutoShoot(angle, RPM);
-		xboxAutoShoot(Math.PI/4, 0);
-		
+		// xboxAutoShoot(angle, RPM);
+		xboxAutoShoot(Math.PI / 4, 0);
+
 		lastTime = currentTime;
 		lLastEncoderVal = Math.abs(lEncod.get());
 		rLastEncoderVal = Math.abs(rEncod.get());
@@ -196,47 +194,47 @@ public class Robot extends SampleRobot {
 				e.printStackTrace();
 			} // Update controls and sensors
 			Timer.delay(0.001); // wait for a motor update time
-			
+
 		}
 	}
-	
+
 	long startTime = 0;
-	private void kick()
-	{
-		// Pneumatic Kicker
-				
-				
-				if (first)
-				{
-					startTime = System.currentTimeMillis();
-					first = false;
-				}
-				
-				if (xbox.getRawButton(rightBumperButtonNumber)) {
-					float currentTime = System.currentTimeMillis() - startTime;
-						out.set(false);	
-						in.set(true);
-						if (currentTime <= 2500){
-						first = true;
-					}
-				} 
-				else {
-					in.set(false);
-					out.set(true);
-				}
+
+	private void kick() {
+		// Pneumatic Kicker jajrkdlsa
+
+		if (first) {
+			startTime = System.currentTimeMillis();
+			first = false;
+		}
+
+		if (xbox.getRawButton(rightBumperButtonNumber)) {
+			float currentTime = System.currentTimeMillis() - startTime;
+			out.set(false); // Kick
+			in.set(true); // Kick
+			if (currentTime <= 2500) { // If this much time has passed
+				in.set(false); // shut it back off
+				out.set(true);
+			}
+		}
 	}
-	
+
 	// XBOX SHOOTING CONTROLS
 	public final int deg45 = 40;
 	public final int deg60 = 55;
 	public int moveToDeg;
+
 	private void xboxShoot() {
 		double yAxis = xbox.getRawAxis(5);
 		double trigger = xbox.getRawAxis(2);
-		boolean isHomeButtonPushed = DriverStation.getInstance().getStickButton(0, (byte) 8);
-		boolean isYButtonPushed = DriverStation.getInstance().getStickButton(0, (byte) 4);
-		boolean isBButtenPushed = DriverStation.getInstance().getStickButton(0, (byte) 2);
-		boolean isBackPushed = DriverStation.getInstance().getStickButton(0, (byte) 7);
+		boolean isHomeButtonPushed = DriverStation.getInstance()
+				.getStickButton(0, (byte) 8);
+		boolean isYButtonPushed = DriverStation.getInstance().getStickButton(0,
+				(byte) 4);
+		boolean isBButtenPushed = DriverStation.getInstance().getStickButton(0,
+				(byte) 2);
+		boolean isBackPushed = DriverStation.getInstance().getStickButton(0,
+				(byte) 7);
 		// Firing Wheels
 		if (!(Math.abs(trigger) < deadZone)) {
 			lShoot.set(-trigger);
@@ -250,42 +248,43 @@ public class Robot extends SampleRobot {
 			rShoot.set(0);
 		}
 
-		kick(); //hits ball so hard 
-		
+		kick(); // hits ball so hard
+
 		System.out.println("Lift: " + liftEncod.get());
-		
-	//LIFTER CODE 
-		//ALL BAD
-//	if (isBackPushed) {	// TODO I think that this is all wrong
-//		System.out.println(moveToDeg);
-//		if (yAxis > 0.3){
-//			moveToDeg = (int) (moveToDeg + .5);
-//		}		
-//		if (yAxis < -0.3){					//THis may be correct however i'm at home and can't check it may just float back
-//			moveToDeg = (int) (moveToDeg - .5);
-//		}
-//	}	
 
-		double liftPower = (yAxis); //was yAxis
+		// LIFTER CODE
+		// ALL BAD
+		// if (isBackPushed) { // TODO I think that this is all wrong
+		// System.out.println(moveToDeg);
+		// if (yAxis > 0.3){
+		// moveToDeg = (int) (moveToDeg + .5);
+		// }
+		// if (yAxis < -0.3){ //THis may be correct however i'm at home and
+		// can't check it may just float back
+		// moveToDeg = (int) (moveToDeg - .5);
+		// }
+		// }
 
-//		if (isBButtenPushed){ //Check if the B butten is pressed
-//			int liftDiffToTar = (deg60 + liftEncod.get()); 
-//			if (liftDiffToTar > 4) {
-//				liftPower = -0.6;
-//				
-//			}else{
-//				liftPower = (float) liftDiffToTar * (0.5/4.0);
-//			}
-//		}
-		
+		double liftPower = (yAxis); // was yAxis
+
+		// if (isBButtenPushed){ //Check if the B butten is pressed
+		// int liftDiffToTar = (deg60 + liftEncod.get());
+		// if (liftDiffToTar > 4) {
+		// liftPower = -0.6;
+		//
+		// }else{
+		// liftPower = (float) liftDiffToTar * (0.5/4.0);
+		// }
+		// }
+
 		if (isYButtonPushed) { // Check if the Y butten is pressed
 			int liftDiffToTar = (deg60 + liftEncod.get());
 			if (liftDiffToTar < -4) {
 				liftPower = -0.4;
-			} else if( liftDiffToTar > 4){
+			} else if (liftDiffToTar > 4) {
 				liftPower = 0.5;
-			}else{
-				liftPower = (float)liftDiffToTar * (0.5/4.0);
+			} else {
+				liftPower = (float) liftDiffToTar * (0.5 / 4.0);
 			}
 		}
 
@@ -302,31 +301,27 @@ public class Robot extends SampleRobot {
 		}
 		lift.set(-liftPower);
 	}
-	
-	private double getAngle()
-	{
-		double angle = Math.toRadians(90 - (-liftEncod.get() * (18/71)));
+
+	private double getAngle() {
+		double angle = Math.toRadians(90 - (-liftEncod.get() * (18 / 71)));
 		System.out.println("Angle: " + angle);
 		return angle;
 	}
-	
-	//PREREQ: Home shooter prior to auto-shooting
-	private void xboxAutoShoot(double angle, double RPM)
-	{
-		if(xbox.getRawButton(1) == true)
-		{
-			while(Math.abs(getAngle() - angle) < (Math.PI/71) && xbox.getRawButton(8) == false)
-			{
-				if(getAngle() > angle)
-				lift.set(-0.3);
+
+	// PREREQ: Home shooter prior to auto-shooting
+	private void xboxAutoShoot(double angle, double RPM) {
+		if (xbox.getRawButton(1) == true) {
+			while (Math.abs(getAngle() - angle) < (Math.PI / 71)
+					&& xbox.getRawButton(8) == false) {
+				if (getAngle() > angle)
+					lift.set(-0.3);
 				else
-				lift.set(0.6);
+					lift.set(0.6);
 			}
 			lift.set(0);
-			
+
 		}
 	}
-	
 
 	// XBOX DRIVING CONTROLS
 	private void xboxDrive() {
