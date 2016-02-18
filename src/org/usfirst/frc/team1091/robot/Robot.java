@@ -153,8 +153,8 @@ public class Robot extends SampleRobot {
 		long lCurrentRPM = (long) ((lChangeEncod / 20) / (changeTime)) * 60000;
 		long rCurrentRPM = (long) ((rChangeEncod / 20) / (changeTime)) * 60000;
 
-		System.out.println("lRPM: " + lCurrentRPM);
-		System.out.println("rRPM: " + rCurrentRPM);
+		//System.out.println("lRPM: " + lCurrentRPM);
+		//System.out.println("rRPM: " + rCurrentRPM);
 
 		// Figure out what we are getting from serial
 		// byte[] data = serialPort.read(serialPort.getBytesReceived());
@@ -198,43 +198,28 @@ public class Robot extends SampleRobot {
 		}
 	}
 
-	long startTime = 0;
-
 	private void kick() {
-		// Pneumatic Kicker jajrkdlsa
-
-		if (first) {
-			startTime = System.currentTimeMillis();
-			first = false;
-		}
-
 		if (xbox.getRawButton(rightBumperButtonNumber)) {
-			float currentTime = System.currentTimeMillis() - startTime;
-			out.set(false); // Kick
-			in.set(true); // Kick
-			if (currentTime <= 2500) { // If this much time has passed
-				in.set(false); // shut it back off
-				out.set(true);
-			}
+			out.set(false);
+			in.set(true);
+		} else {
+			out.set(true);
+			in.set(false);
 		}
 	}
 
 	// XBOX SHOOTING CONTROLS
-	public final int deg45 = 40;
+	public final int deg45 = 59;
 	public final int deg60 = 55;
 	public int moveToDeg;
 
 	private void xboxShoot() {
 		double yAxis = xbox.getRawAxis(5);
 		double trigger = xbox.getRawAxis(2);
-		boolean isHomeButtonPushed = DriverStation.getInstance()
-				.getStickButton(0, (byte) 8);
-		boolean isYButtonPushed = DriverStation.getInstance().getStickButton(0,
-				(byte) 4);
-		boolean isBButtenPushed = DriverStation.getInstance().getStickButton(0,
-				(byte) 2);
-		boolean isBackPushed = DriverStation.getInstance().getStickButton(0,
-				(byte) 7);
+		boolean isHomeButtonPushed = DriverStation.getInstance().getStickButton(0, (byte) 8);
+		boolean isYButtonPushed = DriverStation.getInstance().getStickButton(0, (byte) 4);
+		boolean isBButtonPushed = DriverStation.getInstance().getStickButton(0, (byte) 2);
+		boolean isBackPushed = DriverStation.getInstance().getStickButton(0, (byte) 7);
 		// Firing Wheels
 		if (!(Math.abs(trigger) < deadZone)) {
 			lShoot.set(-trigger);
@@ -252,42 +237,19 @@ public class Robot extends SampleRobot {
 
 		System.out.println("Lift: " + liftEncod.get());
 
-		// LIFTER CODE
-		// ALL BAD
-		// if (isBackPushed) { // TODO I think that this is all wrong
-		// System.out.println(moveToDeg);
-		// if (yAxis > 0.3){
-		// moveToDeg = (int) (moveToDeg + .5);
-		// }
-		// if (yAxis < -0.3){ //THis may be correct however i'm at home and
-		// can't check it may just float back
-		// moveToDeg = (int) (moveToDeg - .5);
-		// }
-		// }
 
 		double liftPower = (yAxis); // was yAxis
-
-		// if (isBButtenPushed){ //Check if the B butten is pressed
-		// int liftDiffToTar = (deg60 + liftEncod.get());
-		// if (liftDiffToTar > 4) {
-		// liftPower = -0.6;
-		//
-		// }else{
-		// liftPower = (float) liftDiffToTar * (0.5/4.0);
-		// }
-		// }
-
-		if (isYButtonPushed) { // Check if the Y butten is pressed
-			int liftDiffToTar = (deg60 + liftEncod.get());
-			if (liftDiffToTar < -4) {
-				liftPower = -0.4;
-			} else if (liftDiffToTar > 4) {
-				liftPower = 0.5;
-			} else {
-				liftPower = (float) liftDiffToTar * (0.5 / 4.0);
-			}
+		
+		if (isYButtonPushed) { // Check if the Y button is pressed
+			liftPower = moveToAngle(10); //firing angle
 		}
-
+		else if(isBButtonPushed)
+		{
+			liftPower = moveToAngle(120); //grabbing angle
+			lShoot.set(0.5);
+			rShoot.set(-0.5);			
+		}
+		
 		if (limit.get()) {
 			// We are at the top, so reset it and don't go negative any more
 
@@ -302,6 +264,26 @@ public class Robot extends SampleRobot {
 		lift.set(-liftPower);
 	}
 
+	private double moveToAngle(int angle)
+	{
+		double liftPower;
+		int liftDiffToTar = (angle + liftEncod.get()); //calc distance to target encoder value
+		if (liftDiffToTar < -2) {
+			liftPower = -0.5;
+		} else if (liftDiffToTar > 2) {
+			liftPower = 0.5;
+		} else {
+			liftPower = (float) liftDiffToTar * (0.5 / 4.0);
+		}
+		return liftPower;
+	}
+	
+	private void liftUp()
+	{
+		lift.set(-0.6 * Math.cos(Math.toRadians(liftEncod.get() * 0.755)));
+		System.out.println("Lifting");
+	}
+	
 	private double getAngle() {
 		double angle = Math.toRadians(90 - (-liftEncod.get() * (18 / 71)));
 		System.out.println("Angle: " + angle);
@@ -311,10 +293,9 @@ public class Robot extends SampleRobot {
 	// PREREQ: Home shooter prior to auto-shooting
 	private void xboxAutoShoot(double angle, double RPM) {
 		if (xbox.getRawButton(1) == true) {
-			while (Math.abs(getAngle() - angle) < (Math.PI / 71)
-					&& xbox.getRawButton(8) == false) {
+			while (Math.abs(getAngle() - angle) < (Math.PI / 71) && xbox.getRawButton(8) == false) {
 				if (getAngle() > angle)
-					lift.set(-0.3);
+					liftUp();
 				else
 					lift.set(0.6);
 			}
