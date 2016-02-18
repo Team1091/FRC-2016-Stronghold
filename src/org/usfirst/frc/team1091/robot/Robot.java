@@ -84,6 +84,7 @@ public class Robot extends SampleRobot {
 		lEncod = new Encoder(1, 2, true);
 		rEncod = new Encoder(3, 4);
 		liftEncod = new Encoder(5, 6);
+		shooterLift = new ShooterLift(liftEncod);
 
 		in = new Solenoid(0);
 		out = new Solenoid(1);
@@ -209,9 +210,14 @@ public class Robot extends SampleRobot {
 	}
 
 	// XBOX SHOOTING CONTROLS
-	public final int deg45 = 59;
-	public final int deg60 = 55;
+
+	private final int deg0 = 130; // This is an estimation
+	private final int deg45 = 59;
+	private final int deg60 = 55;
+	private final int deg90 = 0;
+
 	public int moveToDeg;
+	ShooterLift shooterLift;
 
 	private void xboxShoot() {
 		double yAxis = xbox.getRawAxis(5);
@@ -237,53 +243,39 @@ public class Robot extends SampleRobot {
 
 		System.out.println("Lift: " + liftEncod.get());
 
+		if (isHomeButtonPushed) {
+			shooterLift.setTarget(deg90);
+		} else if (isYButtonPushed) { // Check if the Y button is pressed
+			shooterLift.setTarget(deg60);
+		}else{
+			// Freeform lifting -  this assumes y goes from 0 to 1,
+			// and you want to be at deg0 at y=0
+			// and deg90 at y=1
+			shooterLift.setTarget(lerp(deg0, deg90, yAxis));
+		}
 
-		double liftPower = (yAxis); // was yAxis
-		
-		if (isYButtonPushed) { // Check if the Y button is pressed
-			liftPower = moveToAngle(10); //firing angle
-		}
-		else if(isBButtonPushed)
-		{
-			liftPower = moveToAngle(120); //grabbing angle
-			lShoot.set(0.5);
-			rShoot.set(-0.5);			
-		}
-		
+		double liftPower = shooterLift.update();
+
 		if (limit.get()) {
 			// We are at the top, so reset it and don't go negative any more
-
 			if (liftEncod.get() != 0)
 				liftEncod.reset();
 			liftPower = Math.max(0, liftPower);
-		} else {
-			if (isHomeButtonPushed) {
-				liftPower = -0.6;
-			}
 		}
 		lift.set(-liftPower);
 	}
 
-	private double moveToAngle(int angle)
-	{
-		double liftPower;
-		int liftDiffToTar = (angle + liftEncod.get()); //calc distance to target encoder value
-		if (liftDiffToTar < -2) {
-			liftPower = -.6 * (Math.sin(0.755 * liftEncod.get()));
-		} else if (liftDiffToTar > 2) {
-			liftPower = .6 * (Math.sin(0.755 * liftEncod.get()));
-		} else {
-			liftPower = (float) liftDiffToTar * (0.5 / 4.0);
-		}
-		return liftPower;
+	// https://en.wikipedia.org/wiki/Linear_interpolation
+	private double lerp(double v0, double v1, double t) {
+		return v0 + t * (v1 - v0);
 	}
-	
+
 	private void liftUp()
 	{
 		lift.set(-0.6 * Math.cos(Math.toRadians(liftEncod.get() * 0.755)));
 		System.out.println("Lifting");
 	}
-	
+
 	private double getAngle() {
 		double angle = Math.toRadians(90 - (-liftEncod.get() * (18 / 71)));
 		System.out.println("Angle: " + angle);
@@ -293,7 +285,8 @@ public class Robot extends SampleRobot {
 	// PREREQ: Home shooter prior to auto-shooting
 	private void xboxAutoShoot(double angle, double RPM) {
 		if (xbox.getRawButton(1) == true) {
-			while (Math.abs(getAngle() - angle) < (Math.PI / 71) && xbox.getRawButton(8) == false) {
+			while (Math.abs(getAngle() - angle) < (Math.PI / 71)
+					&& xbox.getRawButton(8) == false) {
 				if (getAngle() > angle)
 					liftUp();
 				else
