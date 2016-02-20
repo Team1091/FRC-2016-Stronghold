@@ -6,16 +6,27 @@ public class AutoDrive {
     RobotDrive myRobot;
     Victor lifter;
     DigitalInput limit;
-    
+    boolean first;
+    long startTime;
+    long currentTime;
     public AutoDrive(RobotDrive inputDrive, Victor lifter, DigitalInput limit){
         myRobot = inputDrive;
         this.lifter = lifter;
         this.limit = limit;
+        first = true;
     }
     
     public void autoChoose(){
 		myRobot.setSafetyEnabled(false);
-		try {
+        if(first)
+        {
+            startTime = System.CurrentTimeMillis();
+            first = false;
+        }
+        
+        currentTime = System.CurrentTimeMillis() - startTime;
+		
+        try {
 			// autoPortcullis(-1);
 			// autoChevaldefrise(-1);
 			// autoRampards(-1);
@@ -62,6 +73,7 @@ public class AutoDrive {
 	}
     
     private void liftBack() {
+       if(!limit.get())
         lifter.set(0.4);
     }
 
