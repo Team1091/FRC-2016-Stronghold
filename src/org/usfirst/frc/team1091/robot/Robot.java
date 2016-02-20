@@ -131,27 +131,26 @@ public class Robot extends SampleRobot {
 
 	long lLastEncoderVal = 0;
 	long rLastEncoderVal = 0;
-	long lastTime = System.currentTimeMillis();
 
 	// UPDATE CONTROLS AND SENSORS
 	private void refresh() throws InterruptedException {
-		long currentTime = System.currentTimeMillis();
-		long changeTime = currentTime - lastTime;
-
-		long lCurrentEncod = Math.abs(lEncod.get());
-		double lChangeEncod = (double) lCurrentEncod - lLastEncoderVal;
-
-		long rCurrentEncod = Math.abs(rEncod.get());
-		double rChangeEncod = (double) rCurrentEncod - rLastEncoderVal;
-
-		// was What is bellow
-		// long lCurrentRPM = (long) (((lChangeEncod / 20) / (changeTime)) *
-		// 60000);
-		// long rCurrentRPM = (long) (((rChangeEncod / 20) / (changeTime)) *
-		// 60000);
-
-		long lCurrentRPM = (long) ((lChangeEncod / 20) / (changeTime)) * 60000;
-		long rCurrentRPM = (long) ((rChangeEncod / 20) / (changeTime)) * 60000;
+//		long currentTime = System.currentTimeMillis();
+//		long changeTime = currentTime - lastTime;
+//
+//		long lCurrentEncod = Math.abs(lEncod.get());
+//		double lChangeEncod = (double) lCurrentEncod - lLastEncoderVal;
+//
+//		long rCurrentEncod = Math.abs(rEncod.get());
+//		double rChangeEncod = (double) rCurrentEncod - rLastEncoderVal;
+//
+//		// was What is bellow
+//		// long lCurrentRPM = (long) (((lChangeEncod / 20) / (changeTime)) *
+//		// 60000);
+//		// long rCurrentRPM = (long) (((rChangeEncod / 20) / (changeTime)) *
+//		// 60000);
+//
+//		long lCurrentRPM = (long) ((lChangeEncod / 20) / (changeTime)) * 60000;
+//		long rCurrentRPM = (long) ((rChangeEncod / 20) / (changeTime)) * 60000;
 
 		//System.out.println("lRPM: " + lCurrentRPM);
 		//System.out.println("rRPM: " + rCurrentRPM);
@@ -169,18 +168,18 @@ public class Robot extends SampleRobot {
 		// System.out.println("liftEncod: " + liftEncod.get());
 		// System.out.println("Limit: " + limit.get());
 
-		calc.setAngle(getDistance()); // check dist and perform calculations
-		angle = calc.getAngle(); // update angle val from dist
-		RPM = calc.getRPM(); // update RPM val from dist
+//		calc.setAngle(getDistance()); // check dist and perform calculations
+//		angle = calc.getAngle(); // update angle val from dist
+//		RPM = calc.getRPM(); // update RPM val from dist
 
 		xboxDrive(); // For xbox controls
 		xboxShoot(); // For xbox shooting
 		// xboxAutoShoot(angle, RPM);
 		xboxAutoShoot(Math.PI / 4, 0);
 
-		lastTime = currentTime;
-		lLastEncoderVal = Math.abs(lEncod.get());
-		rLastEncoderVal = Math.abs(rEncod.get());
+////		lastTime = currentTime;
+//		lLastEncoderVal = Math.abs(lEncod.get());
+//		rLastEncoderVal = Math.abs(rEncod.get());
 	}
 
 	// MAIN WHILE LOOP
@@ -237,9 +236,22 @@ public class Robot extends SampleRobot {
 
 		System.out.println("Lift: " + liftEncod.get());
 
-
-		double liftPower = (yAxis); // was yAxis
 		
+		long currentTime = System.currentTimeMillis();
+		long timeChage = currentTime - lastTime;
+		long lastTime = System.currentTimeMillis();
+
+		
+		double liftPower;
+		float Acess;
+		
+		if (yAxis < .3)
+			Acess = Acess + .1 * timeChange;
+		else if (yAxis > - .3)
+			Acess = Acess - .1 * timeChange;
+		
+		liftPower = moveToAngle((int) Acess);		
+				
 		if (isYButtonPushed) { // Check if the Y button is pressed
 			liftPower = moveToAngle(10); //firing angle
 		}
@@ -258,7 +270,7 @@ public class Robot extends SampleRobot {
 			liftPower = Math.max(0, liftPower);
 		} else {
 			if (isHomeButtonPushed) {
-				liftPower = -0.6;
+				liftPower = (moveToAngle(0));
 			}
 		}
 		lift.set(-liftPower);
