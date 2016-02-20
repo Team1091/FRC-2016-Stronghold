@@ -269,9 +269,9 @@ public class Robot extends SampleRobot {
 		double liftPower;
 		int liftDiffToTar = (angle + liftEncod.get()); //calc distance to target encoder value
 		if (liftDiffToTar < -2) {
-			liftPower = -0.5;
+			liftPower = -.6 * (Math.sin(0.755 * liftEncod.get()));
 		} else if (liftDiffToTar > 2) {
-			liftPower = 0.5;
+			liftPower = .6 * (Math.sin(0.755 * liftEncod.get()));
 		} else {
 			liftPower = (float) liftDiffToTar * (0.5 / 4.0);
 		}
