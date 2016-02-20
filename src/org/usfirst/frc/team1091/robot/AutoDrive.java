@@ -65,11 +65,11 @@ public class AutoDrive {
 	}
 
 	private void autoPortcullis(int pos) {
-		autoCenter(pos);
+		 
 	}
 
 	private void autoChevaldefrise(int pos) {
-		autoCenter(pos);
+		 
 	}
     
     private void liftBack() {
@@ -84,7 +84,7 @@ public class AutoDrive {
 		left(0.1);
 		right(0.6);
 		Thread.sleep(500);
-		autoCenter(pos);
+		 
 	}
 
 	private void autoMoat(int pos) throws InterruptedException {
@@ -102,15 +102,15 @@ public class AutoDrive {
 		left(0.1);
 		Thread.sleep(250);
 		stop();
-		autoCenter(pos);
+		 
 	}
 
 	private void autoDrawbridge(int pos) {
-		autoCenter(pos);
+		 
 	}
 
 	private void autoSallyport(int pos) {
-		autoCenter(pos);
+		 
 	}
 
 	public void autoRockwall(int pos) throws InterruptedException { // run backwards
@@ -123,14 +123,14 @@ public class AutoDrive {
 		Thread.sleep(200);
 		forward(-0.5);
 		Thread.sleep(800);
-		autoCenter(pos);
+		 
 	}
 
 	private void autoRoughterrain(int pos) throws InterruptedException {
         liftBack():
         forward(0.3);
 		Thread.sleep(3000);
-		autoCenter(pos);
+		 
 	}
 
 	private void autoLowbar(int pos) throws InterruptedException { // This will
@@ -139,16 +139,12 @@ public class AutoDrive {
 																	// be tested
 																	// USE WITH
 																	// CARE
-		
+		if(currentTime < 5000)
         forward(.5);
-		Thread.sleep(5000);
-		autoCenter(pos);
+		else
+		 
 	}
 
-	// AUTOMOUSLY CENTERS ROBOT
-	private void autoCenter(int pos) {
-
-	}
 
 
 }
