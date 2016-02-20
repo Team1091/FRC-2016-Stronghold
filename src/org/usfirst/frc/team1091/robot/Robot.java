@@ -46,24 +46,6 @@ public class Robot extends SampleRobot {
 
 	final DriverStation.Alliance color;
 
-	boolean xboxBut1, xboxBut2, xboxBut3;
-	/**
-	 * 1: Right Joystick Arcade Drive 2: Left Joystick Arcade Drive 3: Both
-	 * Joystick Tank Drive 4: Trigger Tank Drive
-	 */
-	boolean cyborgBut1, cyborgBut2, cyborgBut3;
-	/**
-	 * 1: Joystick drive / lever shooter 2: Joystick drive / hat shooter 3:
-	 * Joystick drive / scroll shooter
-	 */
-	boolean joyBut1, joyBut2, joyBut3, joyBut4;
-
-	/**
-	 * 1: Dual stick drive / hat shooter 2: Dual stick drive / side button
-	 * shooter 3: Left stick drive / Right shooter 4: Right stick drive / Left
-	 * shooter
-	 **/
-
 	// SerialPort serialPort;
 
 	public Robot() {
@@ -91,7 +73,6 @@ public class Robot extends SampleRobot {
 
 		xbox = new Joystick(0);
 
-		xboxBut1 = true;
 
 		server = CameraServer.getInstance();
 		server.setQuality(100);
@@ -305,12 +286,9 @@ public class Robot extends SampleRobot {
 
 	// XBOX DRIVING CONTROLS
 	private void xboxDrive() {
-		if (xboxBut1) // Right Joy Arcade Drive
-		{
 			double yAxis = xbox.getRawAxis(1) * -.85;
 			double xAxis = xbox.getRawAxis(0) * -.85;
 			if (!(Math.abs(yAxis) < deadZone) || !(Math.abs(xAxis) < deadZone))
 				myRobot.arcadeDrive(yAxis, xAxis, true);
-		}
 	}
 }
