@@ -137,13 +137,13 @@ public class Robot extends SampleRobot {
 	// UPDATE CONTROLS AND SENSORS
 	private void refresh() throws InterruptedException {
 		long currentTime = System.currentTimeMillis();
-		long changeTime = currentTime - lastTime;
+		// long changeTime = currentTime - lastTime;
 
-		long lCurrentEncod = Math.abs(lEncod.get());
-		double lChangeEncod = (double) lCurrentEncod - lLastEncoderVal;
+		// long lCurrentEncod = Math.abs(lEncod.get());
+		// double lChangeEncod = (double) lCurrentEncod - lLastEncoderVal;
 
-		long rCurrentEncod = Math.abs(rEncod.get());
-		double rChangeEncod = (double) rCurrentEncod - rLastEncoderVal;
+		// long rCurrentEncod = Math.abs(rEncod.get());
+		// double rChangeEncod = (double) rCurrentEncod - rLastEncoderVal;
 
 		// was What is bellow
 		// long lCurrentRPM = (long) (((lChangeEncod / 20) / (changeTime)) *
@@ -151,11 +151,13 @@ public class Robot extends SampleRobot {
 		// long rCurrentRPM = (long) (((rChangeEncod / 20) / (changeTime)) *
 		// 60000);
 
-		long lCurrentRPM = (long) ((lChangeEncod / 20) / (changeTime)) * 60000;
-		long rCurrentRPM = (long) ((rChangeEncod / 20) / (changeTime)) * 60000;
+		// long lCurrentRPM = (long) ((lChangeEncod / 20) / (changeTime)) *
+		// 60000;
+		// long rCurrentRPM = (long) ((rChangeEncod / 20) / (changeTime)) *
+		// 60000;
 
-		//System.out.println("lRPM: " + lCurrentRPM);
-		//System.out.println("rRPM: " + rCurrentRPM);
+		// System.out.println("lRPM: " + lCurrentRPM);
+		// System.out.println("rRPM: " + rCurrentRPM);
 
 		// Figure out what we are getting from serial
 		// byte[] data = serialPort.read(serialPort.getBytesReceived());
@@ -226,6 +228,7 @@ public class Robot extends SampleRobot {
 		boolean isYButtonPushed = DriverStation.getInstance().getStickButton(0, (byte) 4);
 		boolean isBButtonPushed = DriverStation.getInstance().getStickButton(0, (byte) 2);
 		boolean isBackPushed = DriverStation.getInstance().getStickButton(0, (byte) 7);
+
 		// Firing Wheels
 		if (!(Math.abs(trigger) < deadZone)) {
 			lShoot.set(-trigger);
@@ -247,11 +250,11 @@ public class Robot extends SampleRobot {
 			shooterLift.setTarget(deg90);
 		} else if (isYButtonPushed) { // Check if the Y button is pressed
 			shooterLift.setTarget(deg60);
-		}else{
-			// Freeform lifting -  this assumes y goes from 0 to 1,
+		} else {
+			// Freeform lifting - this assumes y goes from 0 to 1,
 			// and you want to be at deg0 at y=0
 			// and deg90 at y=1
-			shooterLift.setTarget(lerp(deg0, deg90, yAxis));
+			shooterLift.setTarget(lerp(deg0, deg90, ((double) (yAxis + 1)) / 2.0));
 		}
 
 		double liftPower = shooterLift.update();
@@ -260,7 +263,7 @@ public class Robot extends SampleRobot {
 			// We are at the top, so reset it and don't go negative any more
 			if (liftEncod.get() != 0)
 				liftEncod.reset();
-			liftPower = Math.max(0, liftPower);
+			liftPower = Math.min(0, liftPower);
 		}
 		lift.set(-liftPower);
 	}
@@ -270,8 +273,7 @@ public class Robot extends SampleRobot {
 		return v0 + t * (v1 - v0);
 	}
 
-	private void liftUp()
-	{
+	private void liftUp() {
 		lift.set(-0.6 * Math.cos(Math.toRadians(liftEncod.get() * 0.755)));
 		System.out.println("Lifting");
 	}
@@ -285,8 +287,7 @@ public class Robot extends SampleRobot {
 	// PREREQ: Home shooter prior to auto-shooting
 	private void xboxAutoShoot(double angle, double RPM) {
 		if (xbox.getRawButton(1) == true) {
-			while (Math.abs(getAngle() - angle) < (Math.PI / 71)
-					&& xbox.getRawButton(8) == false) {
+			while (Math.abs(getAngle() - angle) < (Math.PI / 71) && xbox.getRawButton(8) == false) {
 				if (getAngle() > angle)
 					liftUp();
 				else
