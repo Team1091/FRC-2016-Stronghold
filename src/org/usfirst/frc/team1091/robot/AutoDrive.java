@@ -3,7 +3,15 @@ package org.usfirst.frc.team1091.robot;
 import edu.wpi.first.wpilibj.RobotDrive;
 public class AutoDrive {
 
-	public void autoChoose(){
+    RobotDrive myRobot;
+    Victor lifter;
+    
+    public AutoDrive(RobotDrive inputDrive, Victor lifter){
+        myRobot = inputDrive;
+        this.lifter = lifter;
+    }
+    
+    public void autoChoose(){
 		myRobot.setSafetyEnabled(false);
 		try {
 			// autoPortcullis(-1);
@@ -24,11 +32,8 @@ public class AutoDrive {
 		
 	}
 	
-	RobotDrive myRobot;
 	
-	public AutoDrive(RobotDrive inputDrive){
-		myRobot = inputDrive;
-	}
+	
 	
 	private void left(double num) {
 		myRobot.setLeftRightMotorOutputs(num, 0);
@@ -53,9 +58,14 @@ public class AutoDrive {
 	private void autoChevaldefrise(int pos) {
 		autoCenter(pos);
 	}
+    
+    private void liftBack() {
+        lifter.set(0.4);
+    }
 
 	private void autoRampards(int pos) throws InterruptedException {
-		forward(0.4);
+        liftBack();
+        forward(0.4);
 		Thread.sleep(2000);
 		left(0.1);
 		right(0.6);
@@ -64,7 +74,8 @@ public class AutoDrive {
 	}
 
 	private void autoMoat(int pos) throws InterruptedException {
-		forward(0.3);
+        liftBack();
+        forward(0.3);
 		Thread.sleep(1500);
 		stop();
 		Thread.sleep(1000);
@@ -88,9 +99,9 @@ public class AutoDrive {
 		autoCenter(pos);
 	}
 
-	public void autoRockwall(int pos) throws InterruptedException { // run
-																		// backwards
-		forward(-0.3);
+	public void autoRockwall(int pos) throws InterruptedException { // run backwards
+        liftBack();
+        forward(-0.3);
 		Thread.sleep(1500);
 		forward(-0.5);
 		Thread.sleep(1000);
@@ -102,7 +113,8 @@ public class AutoDrive {
 	}
 
 	private void autoRoughterrain(int pos) throws InterruptedException {
-		forward(0.3);
+        liftBack():
+        forward(0.3);
 		Thread.sleep(3000);
 		autoCenter(pos);
 	}
@@ -113,7 +125,8 @@ public class AutoDrive {
 																	// be tested
 																	// USE WITH
 																	// CARE
-		forward(.5);
+		
+        forward(.5);
 		Thread.sleep(5000);
 		autoCenter(pos);
 	}
