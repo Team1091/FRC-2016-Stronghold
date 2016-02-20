@@ -5,10 +5,12 @@ public class AutoDrive {
 
     RobotDrive myRobot;
     Victor lifter;
+    DigitalInput limit;
     
-    public AutoDrive(RobotDrive inputDrive, Victor lifter){
+    public AutoDrive(RobotDrive inputDrive, Victor lifter, DigitalInput limit){
         myRobot = inputDrive;
         this.lifter = lifter;
+        this.limit = limit;
     }
     
     public void autoChoose(){

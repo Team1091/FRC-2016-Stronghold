@@ -56,7 +56,7 @@ public class Robot extends SampleRobot {
 		System.out.print(color.name());
 		myRobot = new RobotDrive(0, 1, 2, 3);
 		myRobot.setExpiration(0.1);
-		autoDrive = new AutoDrive(myRobot, lift);
+		autoDrive = new AutoDrive(myRobot, lift, limit);
 		lShoot = new Victor(5);
 		rShoot = new Victor(6);
 		lift = new Victor(4);
