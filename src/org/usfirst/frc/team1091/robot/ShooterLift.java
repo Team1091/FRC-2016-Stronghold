@@ -30,7 +30,7 @@ public class ShooterLift {
 		double liftPower = 0;
 
 		long nowTime = System.currentTimeMillis();
-		double deltaTime = (double) (lastTime - nowTime) / 1000.0;
+		double deltaTime = (double) (nowTime-lastTime) / 1000.0;
 		lastTime = nowTime;
 
 		if (currentAngle < targetAngle) {
@@ -45,10 +45,10 @@ public class ShooterLift {
 		} else if (liftDiffToTar > fudgeFactor) {
 			liftPower = 0.75;
 		} else {
-			liftPower = (double) liftDiffToTar * (1.0 / (fudgeFactor * 2));
+			liftPower = (double) liftDiffToTar * (1.0 / (fudgeFactor * 2.0));
 		}
 
-		System.out.println("current: " + currentAngle + " p: " + liftPower);
+		System.out.println("current: " + currentAngle + " target:" + targetAngle + " p: " + liftPower);
 
 		return liftPower;
 
