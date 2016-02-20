@@ -247,7 +247,7 @@ public class Robot extends SampleRobot {
 		System.out.println("Lift: " + liftEncod.get());
 
 		if (isHomeButtonPushed) {
-			shooterLift.setTarget(deg90);
+			lift.set(-6);
 		} else if (isYButtonPushed) { // Check if the Y button is pressed
 			shooterLift.setTarget(deg60);
 		} else {

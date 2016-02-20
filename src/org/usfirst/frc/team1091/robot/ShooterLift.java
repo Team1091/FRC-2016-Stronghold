@@ -7,7 +7,7 @@ public class ShooterLift {
 
 	Encoder liftEncoder;
 
-	private final double maxAnglularVelocity = 0.5; // Max ticks per second
+	private final double maxAnglularVelocity = 25; // Max ticks per second
 	private final int fudgeFactor = 8; // Size of that ramp. Smaller is more
 										// accurate, larger reduces oscillations
 	private double targetAngle = 0; // The eventual destination in ticks
@@ -34,16 +34,16 @@ public class ShooterLift {
 		lastTime = nowTime;
 
 		if (currentAngle < targetAngle) {
-			currentAngle = Math.max(targetAngle, currentAngle + maxAnglularVelocity * deltaTime);
+			currentAngle = Math.min(targetAngle, currentAngle + maxAnglularVelocity * deltaTime);
 		} else {
-			currentAngle = Math.min(targetAngle, currentAngle - maxAnglularVelocity * deltaTime);
+			currentAngle = Math.max(targetAngle, currentAngle - maxAnglularVelocity * deltaTime);
 		}
 
 		int liftDiffToTar = ((int) currentAngle + liftEncoder.get());
 		if (liftDiffToTar < -fudgeFactor) {
-			liftPower = -0.75;
+			liftPower = -1;
 		} else if (liftDiffToTar > fudgeFactor) {
-			liftPower = 0.75;
+			liftPower = 1;
 		} else {
 			liftPower = (double) liftDiffToTar * (1.0 / (fudgeFactor * 2.0));
 		}
