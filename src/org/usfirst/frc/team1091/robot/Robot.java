@@ -264,9 +264,8 @@ public class Robot extends SampleRobot {
 		}
 		
 		if (limit.get()) {
-			// We are at the top, so reset it and don't go negative any more
-			if (liftEncod.get() != 0)
-				liftEncod.reset();
+			// We are at the top, so reset it and don't go negative any more			
+			shooterLift.reset();
 			liftPower = Math.max(0, liftPower);
 		}
 		lift.set(-liftPower);

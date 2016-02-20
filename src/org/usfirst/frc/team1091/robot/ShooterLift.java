@@ -54,4 +54,12 @@ public class ShooterLift {
 
 	}
 
+	public void reset() {
+		if (liftEncoder.get() != 0)
+			liftEncoder.reset();
+
+		currentAngle = 0;
+		
+	}
+
 }
