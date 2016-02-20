@@ -7,7 +7,7 @@ public class ShooterLift {
 
 	Encoder liftEncoder;
 
-	private final double maxAnglularVelocity = 25; // Max ticks per second
+	private final double maxAnglularVelocity = 50; // Max ticks per second
 	private final int fudgeFactor = 8; // Size of that ramp. Smaller is more
 										// accurate, larger reduces oscillations
 	private double targetAngle = 0; // The eventual destination in ticks

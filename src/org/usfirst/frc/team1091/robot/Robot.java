@@ -215,7 +215,7 @@ public class Robot extends SampleRobot {
 
 	private final int deg0 = 130; // This is an estimation
 	private final int deg45 = 59;
-	private final int deg60 = 55;
+	private final int deg60 = 10;
 	private final int deg90 = 0;
 
 	public int moveToDeg;
@@ -224,7 +224,7 @@ public class Robot extends SampleRobot {
 	private void xboxShoot() {
 		double yAxis = xbox.getRawAxis(5);
 		double trigger = xbox.getRawAxis(2);
-		boolean isHomeButtonPushed = DriverStation.getInstance().getStickButton(0, (byte) 8);
+		boolean isHomeButtonPushed = xbox.getRawButton(8);
 		boolean isYButtonPushed = DriverStation.getInstance().getStickButton(0, (byte) 4);
 		boolean isBButtonPushed = DriverStation.getInstance().getStickButton(0, (byte) 2);
 		boolean isBackPushed = DriverStation.getInstance().getStickButton(0, (byte) 7);
@@ -248,7 +248,8 @@ public class Robot extends SampleRobot {
 
 		double liftPower = 0;
 		if (isHomeButtonPushed) {
-			liftPower = -0.6;
+			liftPower = -0.8;
+			System.out.print("HOMING");
 		} else {
 		
 			if (isYButtonPushed) { // Check if the Y button is pressed
@@ -268,6 +269,7 @@ public class Robot extends SampleRobot {
 			shooterLift.reset();
 			liftPower = Math.max(0, liftPower);
 		}
+		System.out.print("POWER: " + liftPower);
 		lift.set(-liftPower);
 	}
 
