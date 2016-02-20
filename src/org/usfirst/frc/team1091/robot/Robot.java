@@ -254,7 +254,9 @@ public class Robot extends SampleRobot {
 			// Freeform lifting - this assumes y goes from 0 to 1,
 			// and you want to be at deg0 at y=0
 			// and deg90 at y=1
-			shooterLift.setTarget(lerp(deg0, deg90, ((double) (yAxis + 1)) / 2.0));
+			
+			shooterLift.setTarget(lerp(deg90, deg0, ((double) (yAxis + 1)) / 2.0));
+			
 		}
 
 		double liftPower = shooterLift.update();
