@@ -265,7 +265,7 @@ public class Robot extends SampleRobot {
 			// We are at the top, so reset it and don't go negative any more
 			if (liftEncod.get() != 0)
 				liftEncod.reset();
-			liftPower = Math.min(0, liftPower);
+			liftPower = Math.max(0, liftPower);
 		}
 		lift.set(-liftPower);
 	}
