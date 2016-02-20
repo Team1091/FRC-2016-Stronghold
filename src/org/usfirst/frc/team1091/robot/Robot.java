@@ -246,21 +246,23 @@ public class Robot extends SampleRobot {
 
 		System.out.println("Lift: " + liftEncod.get());
 
+		double liftPower = 0;
 		if (isHomeButtonPushed) {
-			lift.set(-6);
-		} else if (isYButtonPushed) { // Check if the Y button is pressed
-			shooterLift.setTarget(deg60);
+			liftPower = -0.6;
 		} else {
-			// Freeform lifting - this assumes y goes from 0 to 1,
-			// and you want to be at deg0 at y=0
-			// and deg90 at y=1
-			
-			shooterLift.setTarget(lerp(deg90, deg0, ((double) (yAxis + 1)) / 2.0));
-			
+		
+			if (isYButtonPushed) { // Check if the Y button is pressed
+				shooterLift.setTarget(deg60);
+			} else {
+				// Freeform lifting - this assumes y goes from 0 to 1,
+				// and you want to be at deg0 at y=0
+				// and deg90 at y=1
+				shooterLift.setTarget(lerp(deg90, deg0, ((double) (yAxis + 1)) / 2.0));
+			}
+
+			liftPower = shooterLift.update();
 		}
-
-		double liftPower = shooterLift.update();
-
+		
 		if (limit.get()) {
 			// We are at the top, so reset it and don't go negative any more
 			if (liftEncod.get() != 0)
