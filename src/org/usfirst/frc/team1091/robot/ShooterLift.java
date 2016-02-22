@@ -6,13 +6,13 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Victor;
 
-public class ShooterLift implements Runnable{
+public class ShooterLift implements Runnable {
 
 	Encoder liftEncoder;
 	Joystick xbox;
 	Victor lift;
 	DigitalInput limit;
-	
+
 	private final int deg0 = 130; // This is an estimation
 	private final int deg45 = 59;
 	private final int aimAng = 8;
@@ -32,19 +32,19 @@ public class ShooterLift implements Runnable{
 		this.limit = limit;
 	}
 
-	public void setTarget(double angle) {
+	private void setTarget(double angle) {
 		targetAngle = angle;
 	}
 
 	/**
 	 * Do you even lift, bro?
 	 */
-	public double update() {
+	private double update() {
 
 		double liftPower = 0;
 
 		long nowTime = System.currentTimeMillis();
-		double deltaTime = (double) (nowTime-lastTime) / 1000.0;
+		double deltaTime = (double) (nowTime - lastTime) / 1000.0;
 		lastTime = nowTime;
 
 		if (currentAngle < targetAngle) {
@@ -68,26 +68,26 @@ public class ShooterLift implements Runnable{
 
 	}
 
-	public void reset() {
+	private void reset() {
 		if (liftEncoder.get() != 0)
 			liftEncoder.reset();
 
 		currentAngle = 0;
-		
+
 	}
 
 	// https://en.wikipedia.org/wiki/Linear_interpolation
-		private double lerp(double v0, double v1, double t) {
-			return v0 + t * (v1 - v0);
-		}
-	
+	private double lerp(double v0, double v1, double t) {
+		return v0 + t * (v1 - v0);
+	}
+
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
 		boolean isHomeButtonPushed = xbox.getRawButton(8);
 		boolean isYButtonPushed = xbox.getRawButton(4);
 		double yAxis = xbox.getRawAxis(5);
-		
+
 		System.out.println("Lift: " + liftEncoder.get());
 
 		double liftPower = 0;
@@ -95,7 +95,7 @@ public class ShooterLift implements Runnable{
 			liftPower = -0.8;
 			System.out.print("HOMING");
 		} else {
-		
+
 			if (isYButtonPushed) { // Check if the Y button is pressed
 				setTarget(aimAng);
 			} else {
@@ -107,9 +107,9 @@ public class ShooterLift implements Runnable{
 
 			liftPower = update();
 		}
-		
+
 		if (limit.get()) {
-			// We are at the top, so reset it and don't go negative any more			
+			// We are at the top, so reset it and don't go negative any more
 			reset();
 			liftPower = Math.max(0, liftPower);
 		}

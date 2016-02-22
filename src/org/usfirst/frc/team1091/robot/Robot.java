@@ -76,9 +76,6 @@ public class Robot extends SampleRobot {
 		in = new Solenoid(0);
 		out = new Solenoid(1);
 
-		
-
-
 		server = CameraServer.getInstance();
 		server.setQuality(100);
 		// the camera name (ex "cam0") can be found through the roboRIO web
@@ -207,12 +204,7 @@ public class Robot extends SampleRobot {
 	ShooterLift shooterLift;
 
 	private void xboxShoot() {
-		double yAxis = xbox.getRawAxis(5);
 		double trigger = xbox.getRawAxis(2);
-		boolean isHomeButtonPushed = xbox.getRawButton(8);
-		boolean isYButtonPushed = DriverStation.getInstance().getStickButton(0, (byte) 4);
-		boolean isBButtonPushed = DriverStation.getInstance().getStickButton(0, (byte) 2);
-		boolean isBackPushed = DriverStation.getInstance().getStickButton(0, (byte) 7);
 
 		// Firing Wheels
 		if (!(Math.abs(trigger) < deadZone)) {
@@ -227,9 +219,7 @@ public class Robot extends SampleRobot {
 			rShoot.set(0);
 		}
 
-		kick(); // hits ball so hard
-
-		
+		kick(); // hits ball so hard		
 	}
 
 	

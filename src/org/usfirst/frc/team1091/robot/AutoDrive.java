@@ -110,7 +110,7 @@ public class AutoDrive {
 
 	}
 
-	public void autoRockwall(long time) { // run
+	private void autoRockwall(long time) { // run
 																	// backwards
 		liftBack();
 		if(time<1500)
