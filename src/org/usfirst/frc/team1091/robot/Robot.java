@@ -56,13 +56,15 @@ public class Robot extends SampleRobot {
 		System.out.print(color.name());
 		myRobot = new RobotDrive(0, 1, 2, 3);
 		myRobot.setExpiration(0.1);
-		autoDrive = new AutoDrive(myRobot, lift, limit);
+
 		lShoot = new Victor(5);
 		rShoot = new Victor(6);
 		lift = new Victor(4);
 
 		limit = new DigitalInput(0); // normally open
 
+		autoDrive = new AutoDrive(myRobot, lift, limit);
+		
 		lEncod = new Encoder(1, 2, true);
 		rEncod = new Encoder(3, 4);
 		liftEncod = new Encoder(5, 6);
