@@ -12,6 +12,7 @@ public class ShooterLift implements Runnable {
 	Joystick xbox;
 	Victor lift;
 	DigitalInput limit;
+	boolean isDisabled;
 
 	private final int deg0 = 130; // This is an estimation
 	private final int deg45 = 59;
@@ -84,37 +85,52 @@ public class ShooterLift implements Runnable {
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		boolean isHomeButtonPushed = xbox.getRawButton(8);
-		boolean isYButtonPushed = xbox.getRawButton(4);
-		double yAxis = xbox.getRawAxis(5);
+		while (!Thread.interrupted() && !isDisabled) {
+			boolean isHomeButtonPushed = xbox.getRawButton(8);
+			boolean isYButtonPushed = xbox.getRawButton(4);
+			double yAxis = xbox.getRawAxis(5);
 
-		System.out.println("Lift: " + liftEncoder.get());
+			System.out.println("Lift: " + liftEncoder.get());
 
-		double liftPower = 0;
-		if (isHomeButtonPushed) {
-			liftPower = -0.8;
-			System.out.print("HOMING");
-		} else {
-
-			if (isYButtonPushed) { // Check if the Y button is pressed
-				setTarget(aimAng);
+			double liftPower = 0;
+			if (isHomeButtonPushed) {
+				liftPower = -0.8;
+				System.out.print("HOMING");
 			} else {
-				// Freeform lifting - this assumes y goes from 0 to 1,
-				// and you want to be at deg0 at y=0
-				// and deg90 at y=1
-				setTarget(lerp(deg90, deg0, ((double) (yAxis + 1)) / 2.0));
+
+				if (isYButtonPushed) { // Check if the Y button is pressed
+					setTarget(aimAng);
+				} else {
+					// Freeform lifting - this assumes y goes from 0 to 1,
+					// and you want to be at deg0 at y=0
+					// and deg90 at y=1
+					setTarget(lerp(deg90, deg0, ((double) (yAxis + 1)) / 2.0));
+				}
+
+				liftPower = update();
 			}
 
-			liftPower = update();
+			if (limit.get()) {
+				// We are at the top, so reset it and don't go negative any more
+				reset();
+				liftPower = Math.max(0, liftPower);
+			}
+			System.out.print("POWER: " + liftPower);
+			lift.set(-liftPower);
+			Thread.yield();
+			
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
-
-		if (limit.get()) {
-			// We are at the top, so reset it and don't go negative any more
-			reset();
-			liftPower = Math.max(0, liftPower);
-		}
-		System.out.print("POWER: " + liftPower);
-		lift.set(-liftPower);
+	}
+	
+	public void disabled()
+	{
+		isDisabled = true;
 	}
 
 }
