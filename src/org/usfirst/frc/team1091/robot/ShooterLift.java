@@ -3,7 +3,7 @@ package org.usfirst.frc.team1091.robot;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Victor;
 
-public class ShooterLift {
+public class ShooterLift implements Runnable{
 
 	Encoder liftEncoder;
 
@@ -59,6 +59,12 @@ public class ShooterLift {
 			liftEncoder.reset();
 
 		currentAngle = 0;
+		
+	}
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
 		
 	}
 

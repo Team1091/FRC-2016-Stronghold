@@ -48,6 +48,7 @@ public class Robot extends SampleRobot {
 
 	// SerialPort serialPort;
 
+	Thread thread;
 	public Robot() {
 
 		// serialPort = new SerialPort(19200, Port.kUSB);
@@ -81,6 +82,8 @@ public class Robot extends SampleRobot {
 		// the camera name (ex "cam0") can be found through the roboRIO web
 		// interface
 		server.startAutomaticCapture("cam0");
+		
+		thread = new Thread(shooterLift);
 	}
 
 	// MAIN AUTONOMOUS METHOD
