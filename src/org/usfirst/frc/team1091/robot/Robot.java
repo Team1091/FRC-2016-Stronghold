@@ -198,7 +198,7 @@ public class Robot extends SampleRobot {
 
 	private final int deg0 = 130; // This is an estimation
 	private final int deg45 = 59;
-	private final int deg60 = 10;
+	private final int aimAng = 8;
 	private final int deg90 = 0;
 
 	public int moveToDeg;
@@ -236,7 +236,7 @@ public class Robot extends SampleRobot {
 		} else {
 		
 			if (isYButtonPushed) { // Check if the Y button is pressed
-				shooterLift.setTarget(deg60);
+				shooterLift.setTarget(aimAng);
 			} else {
 				// Freeform lifting - this assumes y goes from 0 to 1,
 				// and you want to be at deg0 at y=0
