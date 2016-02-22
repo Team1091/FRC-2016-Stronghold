@@ -66,15 +66,17 @@ public class Robot extends SampleRobot {
 
 		autoDrive = new AutoDrive(myRobot, lift, limit);
 		
+		xbox = new Joystick(0);
+		
 		lEncod = new Encoder(1, 2, true);
 		rEncod = new Encoder(3, 4);
 		liftEncod = new Encoder(5, 6);
-		shooterLift = new ShooterLift(liftEncod);
+		shooterLift = new ShooterLift(liftEncod, xbox, lift, limit);
 
 		in = new Solenoid(0);
 		out = new Solenoid(1);
 
-		xbox = new Joystick(0);
+		
 
 
 		server = CameraServer.getInstance();
@@ -199,10 +201,7 @@ public class Robot extends SampleRobot {
 
 	// XBOX SHOOTING CONTROLS
 
-	private final int deg0 = 130; // This is an estimation
-	private final int deg45 = 59;
-	private final int aimAng = 8;
-	private final int deg90 = 0;
+	
 
 	public int moveToDeg;
 	ShooterLift shooterLift;
@@ -230,39 +229,10 @@ public class Robot extends SampleRobot {
 
 		kick(); // hits ball so hard
 
-		System.out.println("Lift: " + liftEncod.get());
-
-		double liftPower = 0;
-		if (isHomeButtonPushed) {
-			liftPower = -0.8;
-			System.out.print("HOMING");
-		} else {
 		
-			if (isYButtonPushed) { // Check if the Y button is pressed
-				shooterLift.setTarget(aimAng);
-			} else {
-				// Freeform lifting - this assumes y goes from 0 to 1,
-				// and you want to be at deg0 at y=0
-				// and deg90 at y=1
-				shooterLift.setTarget(lerp(deg90, deg0, ((double) (yAxis + 1)) / 2.0));
-			}
-
-			liftPower = shooterLift.update();
-		}
-		
-		if (limit.get()) {
-			// We are at the top, so reset it and don't go negative any more			
-			shooterLift.reset();
-			liftPower = Math.max(0, liftPower);
-		}
-		System.out.print("POWER: " + liftPower);
-		lift.set(-liftPower);
 	}
 
-	// https://en.wikipedia.org/wiki/Linear_interpolation
-	private double lerp(double v0, double v1, double t) {
-		return v0 + t * (v1 - v0);
-	}
+	
 
 	private void liftUp() {
 		lift.set(-0.6 * Math.cos(Math.toRadians(liftEncod.get() * 0.755)));
