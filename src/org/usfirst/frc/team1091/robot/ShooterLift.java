@@ -14,10 +14,10 @@ public class ShooterLift implements Runnable {
 	private DigitalInput limit;
 	private boolean isDisabled;
 
-	private final int deg0 = 130; // This is an estimation
-	private final int deg45 = 59;
-	private final int aimAng = 59;
-	private final int deg90 = 0;
+	private final int A = 130; // This all is an estimation
+	private final int B = 59;
+	private final int X = 40;
+	private final int Y = 0;
 
 	private final double maxAnglularVelocity = 50; // Max ticks per second
 	private final int fudgeFactor = 8; // Size of that ramp. Smaller is more
@@ -63,7 +63,6 @@ public class ShooterLift implements Runnable {
 			liftPower = (double) liftDiffToTar * (1.0 / (fudgeFactor * 2.0));
 		}
 
-
 		return liftPower;
 
 	}
@@ -84,22 +83,26 @@ public class ShooterLift implements Runnable {
 	@Override
 	public void run() {
 		while (!Thread.interrupted() && !isDisabled) {
-			boolean isHomeButtonPushed = xbox.getRawButton(8);
+			boolean isStartButtenPushed = xbox.getRawButton(8);
 			boolean isYButtonPushed = xbox.getRawButton(4);
-			double yAxis = xbox.getRawAxis(5);
-
-
+			boolean isBButtenPushed = xbox.getRawButton(2);
+			boolean isAButtenPushed = xbox.getRawButton(1);
+			boolean isXButtenPushed = xbox.getRawButton(3);
 			double liftPower = 0;
-			if (isHomeButtonPushed) {
-				liftPower = -0.3;
-			} else {
 
-				if (isYButtonPushed) { // Check if the Y button is pressed
-					setTarget(aimAng);
-				} 
-
-				liftPower = update();
+			if (isYButtonPushed) {
+				setTarget(Y);
+			} else if (isBButtenPushed) {
+				setTarget(B);
+			} else if (isXButtenPushed) {
+				setTarget(X);
+			} else if (isAButtenPushed) {
+				setTarget(A);
+			} else if (isStartButtenPushed) {
+				setTarget(-9000000);
 			}
+
+			liftPower = update();
 
 			if (limit.get()) {
 				// We are at the top, so reset it and don't go negative any more
@@ -107,7 +110,7 @@ public class ShooterLift implements Runnable {
 				liftPower = Math.max(0, liftPower);
 			}
 			lift.set(-liftPower);
-			
+
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
@@ -116,9 +119,8 @@ public class ShooterLift implements Runnable {
 			}
 		}
 	}
-	
-	public void disabled()
-	{
+
+	public void disabled() {
 		isDisabled = true;
 	}
 
