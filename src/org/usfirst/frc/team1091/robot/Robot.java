@@ -26,23 +26,17 @@ public class Robot extends SampleRobot {
 
 	private final int rightBumperButtonNumber = 6;
 
-	private final Victor lShoot;
-	private final Victor rShoot;
-	private final Victor lift;
+	private final Victor lShoot, rShoot, lift;
 	private DigitalInput limit;
 
-	private Encoder lEncod; // 20 per rotation
-	private Encoder rEncod; // 20 per rotation
-	private Encoder liftEncod;
-
-	private Solenoid in;
-	private Solenoid out;
+	private Encoder lEncod, rEncod, liftEncod; // 20 per rotation
+	
+	private Solenoid in, out; //kicker
 
 	final double deadZone = 0.02;
 
 	AngleCalc calc = new AngleCalc();
-	double angle;
-	double RPM;
+	double angle, RPM;
 
 	final DriverStation.Alliance color;
 
@@ -133,13 +127,10 @@ public class Robot extends SampleRobot {
 		}
 	}
 
-	// XBOX SHOOTING CONTROLS
-
-	
-
 	public int moveToDeg;
 	ShooterLift shooterLift;
-
+	
+	//XBOX SHOOTING CONTROLS
 	private void xboxShoot() {
 		
 		double trigger = xbox.getRawAxis(2);
@@ -159,8 +150,6 @@ public class Robot extends SampleRobot {
 
 		kick(); // hits ball so hard		
 	}
-
-
 
 	// XBOX DRIVING CONTROLS
 	private void xboxDrive() {

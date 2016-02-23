@@ -32,14 +32,14 @@ public class AutoDrive {
 		currentTime = System.currentTimeMillis();
 		deltaTime = currentTime- startTime;
 
-			// autoPortcullis(-1);
-			// autoChevaldefrise(-1);
-			// autoRampards(-1);
-			// autoMoat(-1);
-			// autoDrawbridge(-1);
-			// autoSallyport(-1);
+			// autoPortcullis();
+			// autoChevaldefrise();
+			// autoRampards();
+			// autoMoat();
+			// autoDrawbridge();
+			// autoSallyport();
 			autoRockwall();
-			// autoRoughterrain(-1);
+			// autoRoughterrain();
 			// autoLowbar();
 
 		stop();

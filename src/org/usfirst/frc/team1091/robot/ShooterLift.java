@@ -13,10 +13,8 @@ public class ShooterLift implements Runnable {
 	private DigitalInput limit;
 	private boolean isDisabled;
 
-	/**
-	 * Time to config all of the ABXY Stuffs "Yay"
-	 */
 
+	 //Time to config all of the ABXY Stuffs "Yay"
 	private final int A = 130; // This all is an estimation
 	private final int B = 59;
 	private final int X = 40;
