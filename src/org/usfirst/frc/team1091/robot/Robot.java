@@ -13,30 +13,32 @@ import edu.wpi.first.wpilibj.Solenoid;
 
 public class Robot extends SampleRobot {
 
-	CameraServer server;
+	private CameraServer server;
+
 	// ReEnable soon
 	// SerialPort.Port port = new Port(3);
 	// SerialPort sonic = new SerialPort(19200, port);
+	// SerialPort serialPort;
 
-	RobotDrive myRobot;
-	AutoDrive autoDrive;
-	final Joystick xbox; // xbox controller
+	private RobotDrive myRobot;
+	private AutoDrive autoDrive;
+	private final Joystick xbox; // xbox controller
 
-	final int rightBumperButtonNumber = 6;
+	private final int rightBumperButtonNumber = 6;
 
-	final Victor lShoot;
-	final Victor rShoot;
-	final Victor lift;
-	DigitalInput limit;
+	private final Victor lShoot;
+	private final Victor rShoot;
+	private final Victor lift;
+	private DigitalInput limit;
 
-	Encoder lEncod; // 20 per rotation
-	Encoder rEncod; // 20 per rotation
-	Encoder liftEncod;
+	private Encoder lEncod; // 20 per rotation
+	private Encoder rEncod; // 20 per rotation
+	private Encoder liftEncod;
 
-	boolean first;
+	private boolean first;
 
-	Solenoid in;
-	Solenoid out;
+	private Solenoid in;
+	private Solenoid out;
 
 	final double deadZone = 0.02;
 
@@ -46,9 +48,8 @@ public class Robot extends SampleRobot {
 
 	final DriverStation.Alliance color;
 
-	// SerialPort serialPort;
-
-	Thread thread;
+	private Thread thread;
+	
 	public Robot() {
 
 		// serialPort = new SerialPort(19200, Port.kUSB);

@@ -6,13 +6,13 @@ import edu.wpi.first.wpilibj.Victor;
 
 public class AutoDrive {
 
-	RobotDrive myRobot;
-	Victor lifter;
-	DigitalInput limit;
-	boolean first;
+	private RobotDrive myRobot;
+	private Victor lifter;
+	private DigitalInput limit;
+	private boolean first;
 	
-	long startTime;
-	long currentTime;
+	private long startTime;
+	private long currentTime;
 
 	public AutoDrive(RobotDrive inputDrive, Victor lifter, DigitalInput limit) {
 		myRobot = inputDrive;

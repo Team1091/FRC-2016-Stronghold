@@ -8,11 +8,11 @@ import edu.wpi.first.wpilibj.Victor;
 
 public class ShooterLift implements Runnable {
 
-	Encoder liftEncoder;
-	Joystick xbox;
-	Victor lift;
-	DigitalInput limit;
-	boolean isDisabled;
+	private Encoder liftEncoder;
+	private Joystick xbox;
+	private Victor lift;
+	private DigitalInput limit;
+	private boolean isDisabled;
 
 	private final int deg0 = 130; // This is an estimation
 	private final int deg45 = 59;
