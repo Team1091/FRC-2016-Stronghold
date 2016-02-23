@@ -246,11 +246,10 @@ public class Robot extends SampleRobot {
 				myRobot.arcadeDrive(yAxis, xAxis, true);
 	}
 	
+	@Override
 	public void disabled()
 	{
-		
 		System.out.println("<<ROBOT DISABLED -- THREADS ENDED>>");
-		thread.interrupt();
-		
+		thread.interrupt();		
 	}
 }

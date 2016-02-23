@@ -17,10 +17,9 @@ public class ShooterLift implements Runnable {
 	/**
 	 * Time to config all of the ABXY Stuffs "Yay"
 	 */
-	
-	
+
 	private final int A = 130; // This all is an estimation
-	private final int B = 180;
+	private final int B = 59;
 	private final int X = 40;
 	private final int Y = 0;
 
@@ -76,7 +75,7 @@ public class ShooterLift implements Runnable {
 		if (liftEncoder.get() != 0)
 			liftEncoder.reset();
 
-		currentAngle = 0;
+		currentAngle = Math.max(0, currentAngle);
 
 	}
 
@@ -106,14 +105,18 @@ public class ShooterLift implements Runnable {
 			} else if (isStartButtenPushed) {
 				setTarget(-9000000);
 			}
-
+			
 			liftPower = update();
+			System.out.println("1.liftPower: " + liftPower);
 
 			if (limit.get()) {
 				// We are at the top, so reset it and don't go negative any more
 				reset();
-				liftPower = Math.min(0, liftPower);
+				liftPower = Math.max(0, liftPower);
 			}
+
+			
+			System.out.println("2.liftPower: " + liftPower);
 			lift.set(-liftPower);
 
 			try {
