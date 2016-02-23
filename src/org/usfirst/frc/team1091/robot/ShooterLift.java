@@ -1,7 +1,6 @@
 package org.usfirst.frc.team1091.robot;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Victor;
@@ -79,10 +78,6 @@ public class ShooterLift implements Runnable {
 
 	}
 
-	// https://en.wikipedia.org/wiki/Linear_interpolation
-	private double lerp(double v0, double v1, double t) {
-		return v0 + t * (v1 - v0);
-	}
 
 	@Override
 	public void run() {

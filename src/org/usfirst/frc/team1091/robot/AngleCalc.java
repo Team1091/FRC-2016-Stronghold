@@ -6,11 +6,11 @@ public class AngleCalc {
 	private static final double gravity = -9.8; // force of gravity (m/s/s)
 	private static final double diam = 3.875; // diameter of shooting wheels
 												// (in.)
-	private static final double circ = (diam * Math.PI * 0.0254); // circumference
-																	// of
-																	// shooting
-																	// wheel
-																	// (m.)
+	// circumference of shooting wheels (m)
+	
+	private static final double circ = (diam * Math.PI * 0.0254); 
+																
+																	
 	private static final double vY = Math.sqrt(-2 * gravity * height); // initial
 																		// vertical
 																		// velocity

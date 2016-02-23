@@ -35,8 +35,6 @@ public class Robot extends SampleRobot {
 	private Encoder rEncod; // 20 per rotation
 	private Encoder liftEncod;
 
-	private boolean first;
-
 	private Solenoid in;
 	private Solenoid out;
 
@@ -92,29 +90,7 @@ public class Robot extends SampleRobot {
 		autoDrive.autoChoose();
 	}
 
-	// SMOOTHS CONTROLS
-	private double driveConvert(double x) {
-		if (x < -1)
-			return -1;
-		else if (x > 1)
-			return 1;
-		else {
-			if (x < 0) {
-				x *= 1;
-				return (-1 * x * x * x * (x * (x * 6 - 15) + 10));
-			} else {
-				x *= -1;
-				return (x * x * x * (x * (x * 6 - 15) + 10));
-			}
 
-		}
-	}
-
-	// GET DISTANCE TO WALL
-	private double getDistance() {
-		double dist = 0; // replace with distince code
-		return dist;
-	}
 
 	long lLastEncoderVal = 0;
 	long rLastEncoderVal = 0;
@@ -123,45 +99,6 @@ public class Robot extends SampleRobot {
 	// UPDATE CONTROLS AND SENSORS
 	private void refresh() throws InterruptedException {
 		long currentTime = System.currentTimeMillis();
-		// long changeTime = currentTime - lastTime;
-
-		// long lCurrentEncod = Math.abs(lEncod.get());
-		// double lChangeEncod = (double) lCurrentEncod - lLastEncoderVal;
-
-		// long rCurrentEncod = Math.abs(rEncod.get());
-		// double rChangeEncod = (double) rCurrentEncod - rLastEncoderVal;
-
-		// was What is bellow
-		// long lCurrentRPM = (long) (((lChangeEncod / 20) / (changeTime)) *
-		// 60000);
-		// long rCurrentRPM = (long) (((rChangeEncod / 20) / (changeTime)) *
-		// 60000);
-
-		// long lCurrentRPM = (long) ((lChangeEncod / 20) / (changeTime)) *
-		// 60000;
-		// long rCurrentRPM = (long) ((rChangeEncod / 20) / (changeTime)) *
-		// 60000;
-
-		// System.out.println("lRPM: " + lCurrentRPM);
-		// System.out.println("rRPM: " + rCurrentRPM);
-
-		// Figure out what we are getting from serial
-		// byte[] data = serialPort.read(serialPort.getBytesReceived());
-		//
-		// for (int i = 0; i < data.length; i++) {
-		// System.out.print((int) data[i]);
-		// }
-		//
-
-		// System.out.println("lRPM: " + lCurrentRPM);
-		// System.out.println("rRPM: " + rCurrentRPM);
-		// System.out.println("liftEncod: " + liftEncod.get());
-		// System.out.println("Limit: " + limit.get());
-
-		calc.setAngle(getDistance()); // check dist and perform calculations
-		angle = calc.getAngle(); // update angle val from dist
-		RPM = calc.getRPM(); // update RPM val from dist
-
 		xboxDrive(); // For xbox controls
 		xboxShoot(); // For xbox shooting
 		// xboxAutoShoot(angle, RPM);
@@ -221,19 +158,6 @@ public class Robot extends SampleRobot {
 		}
 
 		kick(); // hits ball so hard		
-	}
-
-	
-
-	private void liftUp() {
-		lift.set(-0.6 * Math.cos(Math.toRadians(liftEncod.get() * 0.755)));
-		System.out.println("Lifting");
-	}
-
-	private double getAngle() {
-		double angle = Math.toRadians(90 - (-liftEncod.get() * (18 / 71)));
-		System.out.println("Angle: " + angle);
-		return angle;
 	}
 
 
