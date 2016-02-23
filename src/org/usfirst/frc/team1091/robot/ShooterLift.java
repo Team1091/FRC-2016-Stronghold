@@ -14,8 +14,13 @@ public class ShooterLift implements Runnable {
 	private DigitalInput limit;
 	private boolean isDisabled;
 
+	/**
+	 * Time to config all of the ABXY Stuffs "Yay"
+	 */
+	
+	
 	private final int A = 130; // This all is an estimation
-	private final int B = 59;
+	private final int B = 180;
 	private final int X = 40;
 	private final int Y = 0;
 
@@ -107,7 +112,7 @@ public class ShooterLift implements Runnable {
 			if (limit.get()) {
 				// We are at the top, so reset it and don't go negative any more
 				reset();
-				liftPower = Math.max(0, liftPower);
+				liftPower = Math.min(0, liftPower);
 			}
 			lift.set(-liftPower);
 
