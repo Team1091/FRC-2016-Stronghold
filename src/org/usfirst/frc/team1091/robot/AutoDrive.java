@@ -13,6 +13,7 @@ public class AutoDrive {
 	
 	private long startTime;
 	private long currentTime;
+	private long deltaTime;
 
 	public AutoDrive(RobotDrive inputDrive, Victor lifter, DigitalInput limit) {
 		myRobot = inputDrive;
@@ -29,7 +30,7 @@ public class AutoDrive {
 		}
 
 		currentTime = System.currentTimeMillis();
-		long deltaTime = currentTime- startTime;
+		deltaTime = currentTime- startTime;
 
 			// autoPortcullis(-1);
 			// autoChevaldefrise(-1);
@@ -37,7 +38,7 @@ public class AutoDrive {
 			// autoMoat(-1);
 			// autoDrawbridge(-1);
 			// autoSallyport(-1);
-			autoRockwall(deltaTime);
+			autoRockwall();
 			// autoRoughterrain(-1);
 			// autoLowbar();
 
@@ -74,71 +75,72 @@ public class AutoDrive {
 			lifter.set(0.4);
 	}
 
-//	private void autoRampards(int pos) {
-//		liftBack();
-//		forward(0.4);
-//		Thread.sleep(2000);
-//		left(0.1);
-//		right(0.6);
-//		Thread.sleep(500);
-//
-//	}
-//
-//	private void autoMoat(int pos) {
-//		liftBack();
-//		forward(0.3);
-//		Thread.sleep(1500);
-//		stop();
-//		Thread.sleep(1000);
-//		forward(0.5);
-//		Thread.sleep(1000);
-//		stop();
-//		forward(0.4);
-//		Thread.sleep(750);
-//		right(0.3);
-//		left(0.1);
-//		Thread.sleep(250);
-//		stop();
-//
-//	}
-
-	private void autoDrawbridge(int pos) {
-
+	private void autoRampards() {
+		liftBack();	
+		if(deltaTime < 2000)
+		forward(0.4);
+		if(deltaTime < 2500)
+		{
+			left(0.1);
+			right(0.6);
+		}
+		else
+		stop();
 	}
 
-	private void autoSallyport(int pos) {
-
-	}
-
-	private void autoRockwall(long time) { // run
-																	// backwards
+	private void autoMoat() {
 		liftBack();
-		if(time<1500)
+		if(deltaTime < 1500)
+		forward(0.3);
+		else if(deltaTime < 3000)
+		stop();
+		else if(deltaTime < 4000)
+		forward(0.5);
+		else if(deltaTime < 5000)
+		forward(0.4);
+		else if(deltaTime < 5750)
+		{
+			right(0.3);
+			left(0.1);
+		}
+		else
+		stop();
+
+	}
+
+	private void autoDrawbridge() { //Need attachment
+		
+	}
+
+	private void autoSallyport() { //Need attachment
+		
+	}
+
+	
+	private void autoRockwall() { // RUN BACKWARDSSSSSSSSSSSSSSSSSSS
+		liftBack();
+		if(deltaTime<1500)
 			forward(-0.3);
-		else if(time<2500)
+		else if(deltaTime<2500)
 			forward(-0.5);
-		else if(time<2700)
+		else if(deltaTime<2700)
 			forward(-0.2);
-		else if(time<3500)
+		else if(deltaTime<3500)
 			forward(-0.5);
 		else
-			forward(0.0);
+			stop();
 
 	}
 
-	private void autoRoughterrain(int pos) {
+	private void autoRoughterrain() {
 		liftBack();
+		if(deltaTime < 3000)
 		forward(0.3);
-//		Thread.sleep(3000);
-
+		else
+		stop();
 	}
 
-	private void autoLowbar(int pos) { // This will
-																	// still
-																	// need to
-																	// be tested
-																	// USE WITH
-																	// CARE
+	private void autoLowbar() { // This will still need to be tested USE WITH CARE
 		if (currentTime < 5000)
 			forward(.5);
 
