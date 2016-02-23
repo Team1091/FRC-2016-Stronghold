@@ -164,7 +164,6 @@ public class Robot extends SampleRobot {
 		xboxDrive(); // For xbox controls
 		xboxShoot(); // For xbox shooting
 		// xboxAutoShoot(angle, RPM);
-		xboxAutoShoot(Math.PI / 4, 0);
 
 		lastTime = currentTime;
 		lLastEncoderVal = Math.abs(lEncod.get());
@@ -174,7 +173,7 @@ public class Robot extends SampleRobot {
 	// MAIN WHILE LOOP
 	public void operatorControl() {//
 		myRobot.setSafetyEnabled(true);
-
+		thread.start();
 		while (isOperatorControl() && isEnabled()) {
 			try {
 				refresh();
@@ -204,6 +203,7 @@ public class Robot extends SampleRobot {
 	ShooterLift shooterLift;
 
 	private void xboxShoot() {
+		
 		double trigger = xbox.getRawAxis(2);
 
 		// Firing Wheels
@@ -235,19 +235,7 @@ public class Robot extends SampleRobot {
 		return angle;
 	}
 
-	// PREREQ: Home shooter prior to auto-shooting
-	private void xboxAutoShoot(double angle, double RPM) {
-		if (xbox.getRawButton(1) == true) {
-			while (Math.abs(getAngle() - angle) < (Math.PI / 71) && xbox.getRawButton(8) == false) {
-				if (getAngle() > angle)
-					liftUp();
-				else
-					lift.set(0.6);
-			}
-			lift.set(0);
 
-		}
-	}
 
 	// XBOX DRIVING CONTROLS
 	private void xboxDrive() {
@@ -255,5 +243,13 @@ public class Robot extends SampleRobot {
 			double xAxis = xbox.getRawAxis(0) * -.85;
 			if (!(Math.abs(yAxis) < deadZone) || !(Math.abs(xAxis) < deadZone))
 				myRobot.arcadeDrive(yAxis, xAxis, true);
+	}
+	
+	public void disabled()
+	{
+		
+		System.out.println("<<ROBOT DISABLED -- THREADS ENDED>>");
+		thread.interrupt();
+		
 	}
 }

@@ -16,7 +16,7 @@ public class ShooterLift implements Runnable {
 
 	private final int deg0 = 130; // This is an estimation
 	private final int deg45 = 59;
-	private final int aimAng = 8;
+	private final int aimAng = 59;
 	private final int deg90 = 0;
 
 	private final double maxAnglularVelocity = 50; // Max ticks per second
@@ -63,7 +63,6 @@ public class ShooterLift implements Runnable {
 			liftPower = (double) liftDiffToTar * (1.0 / (fudgeFactor * 2.0));
 		}
 
-		System.out.println("current: " + currentAngle + " target:" + targetAngle + " p: " + liftPower);
 
 		return liftPower;
 
@@ -84,28 +83,20 @@ public class ShooterLift implements Runnable {
 
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
 		while (!Thread.interrupted() && !isDisabled) {
 			boolean isHomeButtonPushed = xbox.getRawButton(8);
 			boolean isYButtonPushed = xbox.getRawButton(4);
 			double yAxis = xbox.getRawAxis(5);
 
-			System.out.println("Lift: " + liftEncoder.get());
 
 			double liftPower = 0;
 			if (isHomeButtonPushed) {
-				liftPower = -0.8;
-				System.out.print("HOMING");
+				liftPower = -0.3;
 			} else {
 
 				if (isYButtonPushed) { // Check if the Y button is pressed
 					setTarget(aimAng);
-				} else {
-					// Freeform lifting - this assumes y goes from 0 to 1,
-					// and you want to be at deg0 at y=0
-					// and deg90 at y=1
-					setTarget(lerp(deg90, deg0, ((double) (yAxis + 1)) / 2.0));
-				}
+				} 
 
 				liftPower = update();
 			}
@@ -115,9 +106,7 @@ public class ShooterLift implements Runnable {
 				reset();
 				liftPower = Math.max(0, liftPower);
 			}
-			System.out.print("POWER: " + liftPower);
 			lift.set(-liftPower);
-			Thread.yield();
 			
 			try {
 				Thread.sleep(10);
