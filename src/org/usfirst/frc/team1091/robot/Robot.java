@@ -137,8 +137,8 @@ public class Robot extends SampleRobot {
 
 		// Firing Wheels
 		if (!(Math.abs(trigger) < deadZone)) {
-			lShoot.set(-trigger);
-			rShoot.set(trigger);
+			lShoot.set(-trigger * .90);
+			rShoot.set(trigger * .90);
 		} else if (xbox.getRawButton(5) == true) {
 			double var = 0.5;
 			lShoot.set(var);
@@ -162,7 +162,9 @@ public class Robot extends SampleRobot {
 	@Override
 	public void disabled()
 	{
-		System.out.println("<<ROBOT DISABLED -- THREADS ENDED>>");
+		shooterLift.disabled();
 		thread.interrupt();		
+		System.out.println("<<ROBOT DISABLED -- THREADS ENDED>>");
+		
 	}
 }

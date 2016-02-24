@@ -15,13 +15,13 @@ public class ShooterLift implements Runnable {
 
 
 	 //Time to config all of the ABXY Stuffs "Yay"
-	private final int A = 130; // This all is an estimation
+	private final int A = 40; // This all is an estimation
 	private final int B = 59;
-	private final int X = 40;
-	private final int Y = 0;
+	private final int X = 0;
+	private final int Y = 26;
 
 	private final double maxAnglularVelocity = 50; // Max ticks per second
-	private final int fudgeFactor = 8; // Size of that ramp. Smaller is more
+	private final int fudgeFactor = 6; // Size of that ramp. Smaller is more
 										// accurate, larger reduces oscillations
 	private double targetAngle = 0; // The eventual destination in ticks
 	private double currentAngle = 0; //
@@ -38,9 +38,6 @@ public class ShooterLift implements Runnable {
 		targetAngle = angle;
 	}
 
-	/**
-	 * Do you even lift, bro?
-	 */
 	private double update() {
 
 		double liftPower = 0;
@@ -100,7 +97,6 @@ public class ShooterLift implements Runnable {
 			}
 			
 			liftPower = update();
-			System.out.println("1.liftPower: " + liftPower);
 
 			if (limit.get()) {
 				// We are at the top, so reset it and don't go negative any more
@@ -109,7 +105,8 @@ public class ShooterLift implements Runnable {
 			}
 
 			
-			System.out.println("2.liftPower: " + liftPower);
+			System.out.println("liftPower: " + liftPower);
+			System.out.println("encoder: " + liftEncoder.get());
 			lift.set(-liftPower);
 
 			try {
@@ -122,7 +119,7 @@ public class ShooterLift implements Runnable {
 	}
 
 	public void disabled() {
-		isDisabled = true;
+		//isDisabled = true;
 	}
 
 }
