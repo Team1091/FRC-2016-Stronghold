@@ -15,8 +15,7 @@ public class ShooterLift implements Runnable {
 	private DigitalInput limit;
 	private boolean isDisabled;
 
-
-	 //Time to config all of the ABXY Stuffs "Yay"
+	// Time to config all of the ABXY Stuffs "Yay"
 	private final int A = 40; // This all is an estimation
 	private final int B = 150;
 	private final int X = 0;
@@ -29,7 +28,8 @@ public class ShooterLift implements Runnable {
 	private double currentAngle = 0; //
 	private long lastTime = System.currentTimeMillis();
 
-	public ShooterLift(Encoder liftEncoder, Joystick joy, Victor lift,Victor lShoot,  Victor rShoot, DigitalInput limit) {
+	public ShooterLift(Encoder liftEncoder, Joystick joy, Victor lift, Victor lShoot, Victor rShoot,
+			DigitalInput limit) {
 		this.liftEncoder = liftEncoder;
 		this.xbox = joy;
 		this.lift = lift;
@@ -77,55 +77,62 @@ public class ShooterLift implements Runnable {
 
 	}
 
-
 	@Override
 	public void run() {
-		while (!Thread.interrupted() && !isDisabled) {
-			boolean isStartButtenPushed = xbox.getRawButton(8);
-			boolean isYButtonPushed = xbox.getRawButton(4);
-			boolean isBButtenPushed = xbox.getRawButton(2);
-			boolean isAButtenPushed = xbox.getRawButton(1);
-			boolean isXButtenPushed = xbox.getRawButton(3);
-			double liftPower = 0;
 
-			if (isYButtonPushed) {
-				setTarget(Y);
-			} else if (isBButtenPushed) {
-				setTarget(B);
-				lShoot.set(.5);
-				rShoot.set(-.5);
-			} else if (isXButtenPushed) {
-				setTarget(X);
-			} else if (isAButtenPushed) {
-				setTarget(A);
-			} else if (isStartButtenPushed) {
-				setTarget(-9000000);
-			}
-			
-			liftPower = update();
+		try {
+			while (!Thread.interrupted() && !isDisabled) {
+				boolean isStartButtenPushed = xbox.getRawButton(8);
+				boolean isYButtonPushed = xbox.getRawButton(4);
+				boolean isBButtenPushed = xbox.getRawButton(2);
+				boolean isAButtenPushed = xbox.getRawButton(1);
+				boolean isXButtenPushed = xbox.getRawButton(3);
+				double liftPower = 0;
 
-			if (limit.get()) {
-				// We are at the top, so reset it and don't go negative any more
-				reset();
-				liftPower = Math.max(0, liftPower);
-			}
+				if (isYButtonPushed) {
+					setTarget(Y);
+				} else if (isBButtenPushed) {
+					setTarget(B);
+					lShoot.set(.5);
+					rShoot.set(-.5);
+				} else if (isXButtenPushed) {
+					setTarget(X);
+				} else if (isAButtenPushed) {
+					setTarget(A);
+				} else if (isStartButtenPushed) {
+					setTarget(-9000000);
+				}
 
-			
-			System.out.println("liftPower: " + liftPower);
-			System.out.println("encoder: " + liftEncoder.get());
-			lift.set(-liftPower);
+				liftPower = update();
 
-			try {
+				if (limit.get()) {
+					// We are at the top, so reset it and don't go negative any
+					// more
+					reset();
+					liftPower = Math.max(0, liftPower);
+				}
+
+				System.out.println("liftPower: " + liftPower);
+				System.out.println("encoder: " + liftEncoder.get());
+				lift.set(-liftPower);
+
 				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
+		} catch (InterruptedException e) {
+			// Interrupted when disabled called, drop out of here
+			e.printStackTrace();
+			return;
 		}
 	}
 
-	public void disabled() {
-		//isDisabled = true;
+	public void disable(Thread thread) {
+		isDisabled = true;
+		thread.interrupt();
+		System.out.println("<<ROBOT DISABLED -- THREADS ENDED>>");
 	}
 
+	public void enable(Thread thread) {
+		isDisabled = false;
+		thread.start();
+	}
 }

@@ -105,7 +105,9 @@ public class Robot extends SampleRobot {
 	// MAIN WHILE LOOP
 	public void operatorControl() {//
 		myRobot.setSafetyEnabled(true);
-		thread.start();
+		
+		shooterLift.enable(thread);
+
 		while (isOperatorControl() && isEnabled()) {
 			try {
 				refresh();
@@ -162,9 +164,6 @@ public class Robot extends SampleRobot {
 	@Override
 	public void disabled()
 	{
-		shooterLift.disabled();
-		thread.interrupt();		
-		System.out.println("<<ROBOT DISABLED -- THREADS ENDED>>");
-		
+		shooterLift.disable(thread);		
 	}
 }
