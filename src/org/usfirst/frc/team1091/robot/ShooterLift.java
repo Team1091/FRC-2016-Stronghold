@@ -21,7 +21,7 @@ public class ShooterLift implements Runnable {
 	private final int X = 130;
 	private final int Y = 26;
 
-	private final double maxAnglularVelocity = 50; // Max ticks per second
+	private final double maxAnglularVelocity = 30; // Max ticks per second
 	private final int fudgeFactor = 6; // Size of that ramp. Smaller is more
 										// accurate, larger reduces oscillations
 	private double targetAngle = 0; // The eventual destination in ticks
@@ -131,7 +131,7 @@ public class ShooterLift implements Runnable {
 			}
 		} catch (InterruptedException e) {
 			// Interrupted when disabled called, drop out of here
-			e.printStackTrace();
+			e.printStackTrace(); 
 			return;
 		}
 	}
@@ -139,7 +139,9 @@ public class ShooterLift implements Runnable {
 	public void disable(Thread thread) {
 		isDisabled = true;
 		// thread.interrupt();
+		System.out.println("");
 		System.out.println("<<ROBOT DISABLED -- THREADS ENDED>>");
+		System.out.println("");
 	}
 
 	public void enable(Thread thread) {

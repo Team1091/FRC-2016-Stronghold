@@ -5,8 +5,6 @@ public class AutoDrive {
 
 	private RobotDrive myRobot;
 	private ShooterLift shooterLift;
-	private boolean first;
-	
 	private long startTime;
 	private long currentTime;
 	private long deltaTime;
@@ -14,17 +12,17 @@ public class AutoDrive {
 	public AutoDrive(RobotDrive inputDrive,  ShooterLift shooterLift) {
 		myRobot = inputDrive;
 		this.shooterLift = shooterLift;
-		first = true;
 	}
 
 	public void autoChoose() {
 		myRobot.setSafetyEnabled(false);
-		if (first) {
-			startTime = System.currentTimeMillis();
-			first = false;
-		}
+		startTime = System.currentTimeMillis();
 		
 		shooterLift.auto = true;
+		
+		System.out.println("");
+		System.out.println("<<ROBOT AUTO -- FUNCTION ACTIVATED>>");
+		System.out.println("");
 		
 		while(deltaTime < 15000)
 		{
@@ -142,10 +140,11 @@ public class AutoDrive {
 		stop();
 	}
 
-	private void autoLowbar() { // This will still need to be tested USE WITH CARE
+	private void autoLowbar() { // RUN BACKWARDS
 		liftTo(130);
-		if (currentTime < 5000)
-			forward(.5);
+		if (deltaTime < 5000 && deltaTime > 1500)
+			forward(-.3);
+		else stop();
 
 	}
 

@@ -56,15 +56,17 @@ public class Robot extends SampleRobot {
 		lift = new Victor(4);
 
 		limit = new DigitalInput(0); // normally open
-
+		xbox = new Joystick(0);
+		liftEncod = new Encoder(5, 6);
+		shooterLift = new ShooterLift(liftEncod, xbox, lift,lShoot,rShoot, limit);
 		autoDrive = new AutoDrive(myRobot, shooterLift);
 		
-		xbox = new Joystick(0);
+		
 		
 		lEncod = new Encoder(1, 2, true);
 		rEncod = new Encoder(3, 4);
-		liftEncod = new Encoder(5, 6);
-		shooterLift = new ShooterLift(liftEncod, xbox, lift,lShoot,rShoot, limit);
+		
+		
 
 		in = new Solenoid(0);
 		out = new Solenoid(1);
@@ -110,6 +112,11 @@ public class Robot extends SampleRobot {
 		
 		shooterLift.enable(thread);
 		shooterLift.auto = false;
+		
+		System.out.println("");
+		System.out.println("<<ROBOT TELEOP -- CONTROLS ACTIVATED>>");
+		System.out.println("");
+		
 		while (isOperatorControl() && isEnabled()) {
 			try {
 				refresh();
