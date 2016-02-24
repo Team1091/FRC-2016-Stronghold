@@ -16,9 +16,9 @@ public class ShooterLift implements Runnable {
 	private boolean isDisabled;
 
 	// Time to config all of the ABXY Stuffs "Yay"
-	private final int A = 40; // This all is an estimation
+	private final int A = 0; // This all is an estimation
 	private final int B = 150;
-	private final int X = 0;
+	private final int X = 130;
 	private final int Y = 26;
 
 	private final double maxAnglularVelocity = 50; // Max ticks per second
@@ -77,31 +77,42 @@ public class ShooterLift implements Runnable {
 
 	}
 
+	public boolean auto = false;
+	public int autoTarget = 0;
+
 	@Override
 	public void run() {
 
 		try {
 			while (!Thread.interrupted() && !isDisabled) {
-				boolean isStartButtenPushed = xbox.getRawButton(8);
-				boolean isYButtonPushed = xbox.getRawButton(4);
-				boolean isBButtenPushed = xbox.getRawButton(2);
-				boolean isAButtenPushed = xbox.getRawButton(1);
-				boolean isXButtenPushed = xbox.getRawButton(3);
 				double liftPower = 0;
+				if (!auto) {
+					boolean isStartButtenPushed = xbox.getRawButton(8);
+					boolean isYButtonPushed = xbox.getRawButton(4);
+					boolean isBButtenPushed = xbox.getRawButton(2);
+					boolean isAButtenPushed = xbox.getRawButton(1);
+					boolean isXButtenPushed = xbox.getRawButton(3);
+					
+					if (isYButtonPushed) {
+						setTarget(Y);
+					} else if (isBButtenPushed) {
+						setTarget(B);
+						lShoot.set(.5);
+						rShoot.set(-.5);
+					} else if (isXButtenPushed) {
+						setTarget(X);
+					} else if (isAButtenPushed) {
+						setTarget(A);
+					} else if (isStartButtenPushed) {
+						setTarget(-9000000);
+					}
+				} else {
 
-				if (isYButtonPushed) {
-					setTarget(Y);
-				} else if (isBButtenPushed) {
-					setTarget(B);
-					lShoot.set(.5);
-					rShoot.set(-.5);
-				} else if (isXButtenPushed) {
-					setTarget(X);
-				} else if (isAButtenPushed) {
-					setTarget(A);
-				} else if (isStartButtenPushed) {
-					setTarget(-9000000);
+					setTarget(autoTarget);
+					
 				}
+
+			
 
 				liftPower = update();
 
@@ -127,7 +138,7 @@ public class ShooterLift implements Runnable {
 
 	public void disable(Thread thread) {
 		isDisabled = true;
-		thread.interrupt();
+		// thread.interrupt();
 		System.out.println("<<ROBOT DISABLED -- THREADS ENDED>>");
 	}
 

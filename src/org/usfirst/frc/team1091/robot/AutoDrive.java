@@ -1,24 +1,19 @@
 package org.usfirst.frc.team1091.robot;
-
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.RobotDrive;
-import edu.wpi.first.wpilibj.Victor;
 
 public class AutoDrive {
 
 	private RobotDrive myRobot;
-	private Victor lifter;
-	private DigitalInput limit;
+	private ShooterLift shooterLift;
 	private boolean first;
 	
 	private long startTime;
 	private long currentTime;
 	private long deltaTime;
 
-	public AutoDrive(RobotDrive inputDrive, Victor lifter, DigitalInput limit) {
+	public AutoDrive(RobotDrive inputDrive,  ShooterLift shooterLift) {
 		myRobot = inputDrive;
-		this.lifter = lifter;
-		this.limit = limit;
+		this.shooterLift = shooterLift;
 		first = true;
 	}
 
@@ -28,9 +23,13 @@ public class AutoDrive {
 			startTime = System.currentTimeMillis();
 			first = false;
 		}
-
-		currentTime = System.currentTimeMillis();
-		deltaTime = currentTime- startTime;
+		
+		shooterLift.auto = true;
+		
+		while(deltaTime < 15000)
+		{
+			currentTime = System.currentTimeMillis();
+			deltaTime = currentTime- startTime;
 
 			// autoPortcullis();
 			// autoChevaldefrise();
@@ -38,10 +37,12 @@ public class AutoDrive {
 			// autoMoat();
 			// autoDrawbridge();
 			// autoSallyport();
-			autoRockwall();
+			//autoRockwall();
 			// autoRoughterrain();
-			// autoLowbar();
-
+			 autoLowbar();
+		}
+		
+		shooterLift.auto = false;
 		stop();
 
 	}
@@ -62,6 +63,11 @@ public class AutoDrive {
 		myRobot.stopMotor();
 	}
 
+	private void liftTo(int ang) {
+		shooterLift.autoTarget = ang;
+	}
+
+	
 	private void autoPortcullis(int pos) {
 
 	}
@@ -70,13 +76,9 @@ public class AutoDrive {
 
 	}
 
-	private void liftBack() {
-		if (!limit.get())
-			lifter.set(0.4);
-	}
-
+	
 	private void autoRampards() {
-		liftBack();	
+		liftTo(30);	
 		if(deltaTime < 2000)
 		forward(0.4);
 		if(deltaTime < 2500)
@@ -89,7 +91,7 @@ public class AutoDrive {
 	}
 
 	private void autoMoat() {
-		liftBack();
+		liftTo(30);
 		if(deltaTime < 1500)
 		forward(0.3);
 		else if(deltaTime < 3000)
@@ -118,7 +120,7 @@ public class AutoDrive {
 
 	
 	private void autoRockwall() { // RUN BACKWARDSSSSSSSSSSSSSSSSSSS
-		liftBack();
+		liftTo(30);
 		if(deltaTime<1500)
 			forward(-0.3);
 		else if(deltaTime<2500)
@@ -133,7 +135,7 @@ public class AutoDrive {
 	}
 
 	private void autoRoughterrain() {
-		liftBack();
+		liftTo(30);
 		if(deltaTime < 3000)
 		forward(0.3);
 		else
@@ -141,6 +143,7 @@ public class AutoDrive {
 	}
 
 	private void autoLowbar() { // This will still need to be tested USE WITH CARE
+		liftTo(130);
 		if (currentTime < 5000)
 			forward(.5);
 

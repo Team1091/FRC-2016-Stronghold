@@ -57,7 +57,7 @@ public class Robot extends SampleRobot {
 
 		limit = new DigitalInput(0); // normally open
 
-		autoDrive = new AutoDrive(myRobot, lift, limit);
+		autoDrive = new AutoDrive(myRobot, shooterLift);
 		
 		xbox = new Joystick(0);
 		
@@ -75,13 +75,15 @@ public class Robot extends SampleRobot {
 		// interface
 		server.startAutomaticCapture("cam0");
 		
-		thread = new Thread(shooterLift);
+		//thread = new Thread(shooterLift);
 	}
 
 	// MAIN AUTONOMOUS METHOD
 
 	public void autonomous() {
+		shooterLift.enable(thread);
 		autoDrive.autoChoose();
+		shooterLift.disable(thread);
 	}
 
 
@@ -107,7 +109,7 @@ public class Robot extends SampleRobot {
 		myRobot.setSafetyEnabled(true);
 		
 		shooterLift.enable(thread);
-
+		shooterLift.auto = false;
 		while (isOperatorControl() && isEnabled()) {
 			try {
 				refresh();
@@ -164,6 +166,7 @@ public class Robot extends SampleRobot {
 	@Override
 	public void disabled()
 	{
-		shooterLift.disable(thread);		
+		shooterLift.disable(thread);	
+		thread = new Thread(shooterLift);
 	}
 }
