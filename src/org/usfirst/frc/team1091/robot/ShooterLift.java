@@ -10,13 +10,15 @@ public class ShooterLift implements Runnable {
 	private Encoder liftEncoder;
 	private Joystick xbox;
 	private Victor lift;
+	private Victor lShoot;
+	private Victor rShoot;
 	private DigitalInput limit;
 	private boolean isDisabled;
 
 
 	 //Time to config all of the ABXY Stuffs "Yay"
 	private final int A = 40; // This all is an estimation
-	private final int B = 59;
+	private final int B = 150;
 	private final int X = 0;
 	private final int Y = 26;
 
@@ -27,11 +29,13 @@ public class ShooterLift implements Runnable {
 	private double currentAngle = 0; //
 	private long lastTime = System.currentTimeMillis();
 
-	public ShooterLift(Encoder liftEncoder, Joystick joy, Victor lift, DigitalInput limit) {
+	public ShooterLift(Encoder liftEncoder, Joystick joy, Victor lift,Victor lShoot,  Victor rShoot, DigitalInput limit) {
 		this.liftEncoder = liftEncoder;
 		this.xbox = joy;
 		this.lift = lift;
 		this.limit = limit;
+		this.lShoot = lShoot;
+		this.rShoot = rShoot;
 	}
 
 	private void setTarget(double angle) {
@@ -88,6 +92,8 @@ public class ShooterLift implements Runnable {
 				setTarget(Y);
 			} else if (isBButtenPushed) {
 				setTarget(B);
+				lShoot.set(.5);
+				rShoot.set(-.5);
 			} else if (isXButtenPushed) {
 				setTarget(X);
 			} else if (isAButtenPushed) {

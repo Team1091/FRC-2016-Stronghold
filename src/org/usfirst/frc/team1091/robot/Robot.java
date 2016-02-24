@@ -64,7 +64,7 @@ public class Robot extends SampleRobot {
 		lEncod = new Encoder(1, 2, true);
 		rEncod = new Encoder(3, 4);
 		liftEncod = new Encoder(5, 6);
-		shooterLift = new ShooterLift(liftEncod, xbox, lift, limit);
+		shooterLift = new ShooterLift(liftEncod, xbox, lift,lShoot,rShoot, limit);
 
 		in = new Solenoid(0);
 		out = new Solenoid(1);
