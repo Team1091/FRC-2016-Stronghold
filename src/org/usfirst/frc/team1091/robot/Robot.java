@@ -148,8 +148,8 @@ public class Robot extends SampleRobot {
 
 		// Firing Wheels
 		if (!(Math.abs(trigger) < deadZone)) {
-			lShoot.set(-trigger * .90);
-			rShoot.set(trigger * .90);
+			lShoot.set(-trigger * .85);
+			rShoot.set(trigger * .85);
 		} else if (xbox.getRawButton(5) == true) {
 			double var = 0.5;
 			lShoot.set(var);

@@ -19,7 +19,7 @@ public class ShooterLift implements Runnable {
 	private final int A = 0; // This all is an estimation
 	private final int B = 150;
 	private final int X = 130;
-	private final int Y = 26;
+	private final int Y = 28; //26
 
 	private final double maxAnglularVelocity = 30; // Max ticks per second
 	private final int fudgeFactor = 6; // Size of that ramp. Smaller is more
@@ -123,8 +123,8 @@ public class ShooterLift implements Runnable {
 					liftPower = Math.max(0, liftPower);
 				}
 
-				System.out.println("liftPower: " + liftPower);
-				System.out.println("encoder: " + liftEncoder.get());
+				//System.out.println("liftPower: " + liftPower);
+				//System.out.println("encoder: " + liftEncoder.get());
 				lift.set(-liftPower);
 
 				Thread.sleep(10);
@@ -140,7 +140,7 @@ public class ShooterLift implements Runnable {
 		isDisabled = true;
 		// thread.interrupt();
 		System.out.println("");
-		System.out.println("<<ROBOT DISABLED -- THREADS ENDED>>");
+		System.out.println("<<ROBOT DISABLED -- SHOOTER HOLDER THREADS ENDED>>");
 		System.out.println("");
 	}
 
